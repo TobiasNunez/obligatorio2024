@@ -6,7 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<Obligatorio2024Context>(options =>
-    options.UseSqlServer("Data Source=GOHANSSJ2;Initial Catalog=obligatorio2024;Integrated Security=true; TrustServerCertificate=True"));
+    options.UseSqlServer("Data Source=FACUNDO;Initial Catalog=obligatorio2024;Integrated Security=true; TrustServerCertificate=True"));
 
 builder.Services.AddSession(options =>
 {

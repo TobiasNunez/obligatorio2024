@@ -18,4 +18,5 @@ public partial class Clima
     public virtual Reserva? Reserva { get; set; }
 
     //asi es man vamo arriba
+    //Guti gay
 }
