@@ -16,4 +16,6 @@ public partial class Clima
     public int? ReservaId { get; set; }
 
     public virtual Reserva? Reserva { get; set; }
+
+    //asi es man vamo arriba
 }
