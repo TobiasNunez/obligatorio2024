@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace obligatorio2024.Models;
 
@@ -12,7 +13,8 @@ public partial class Reserva
     public int? MesaId { get; set; }
 
     public DateTime FechaReserva { get; set; }
-
+    [Required]
+    [RegularExpression("Pendiente|Confirmada|Cancelada", ErrorMessage = "El estado de la reserva debe ser 'Pendiente', 'Confirmada' o 'Cancelada'.")]
     public string Estado { get; set; } = null!;
 
     public virtual Cliente? Cliente { get; set; }

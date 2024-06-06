@@ -50,11 +50,16 @@ public class MesasController : Controller
     // POST: Mesas/Create
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("Id,NumeroMesa,Capacidad,Estado,RestauranteId")] Mesa mesa)
+    public async Task<IActionResult> Create([Bind("Id,Capacidad,Estado,RestauranteId")] Mesa mesa)
     {
         if (ModelState.IsValid)
         {
-            mesa.NumeroMesa = _context.Mesas.Max(m => (int?)m.NumeroMesa) + 1 ?? 1;
+            // Calcular el próximo Número de Mesa para el restaurante
+            var maxNumeroMesa = _context.Mesas
+                .Where(m => m.RestauranteId == mesa.RestauranteId)
+                .Max(m => (int?)m.NumeroMesa) ?? 0;
+            mesa.NumeroMesa = maxNumeroMesa + 1;
+
             _context.Add(mesa);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
@@ -141,11 +146,16 @@ public class MesasController : Controller
         var mesa = await _context.Mesas.FindAsync(id);
         if (mesa != null)
         {
+            var restauranteId = mesa.RestauranteId;
+
             _context.Mesas.Remove(mesa);
             await _context.SaveChangesAsync();
 
-            // Reorganizar los números de mesa
-            var mesas = await _context.Mesas.OrderBy(m => m.NumeroMesa).ToListAsync();
+            // Reorganizar los números de mesa dentro del restaurante
+            var mesas = await _context.Mesas
+                .Where(m => m.RestauranteId == restauranteId)
+                .OrderBy(m => m.NumeroMesa)
+                .ToListAsync();
             for (int i = 0; i < mesas.Count; i++)
             {
                 mesas[i].NumeroMesa = i + 1;
@@ -161,3 +171,4 @@ public class MesasController : Controller
         return _context.Mesas.Any(e => e.Id == id);
     }
 }
+

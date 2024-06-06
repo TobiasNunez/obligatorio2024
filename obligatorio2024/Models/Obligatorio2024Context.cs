@@ -41,9 +41,9 @@ public partial class Obligatorio2024Context : DbContext
 
     public virtual DbSet<Usuario> Usuarios { get; set; }
 
-//    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-//        => optionsBuilder.UseSqlServer("Data Source=GOHANSSJ2; Initial Catalog=obligatorio2024; Integrated Security=true; TrustServerCertificate=True");
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Data Source=GOHANSSJ2; Initial Catalog=obligatorio2024; Integrated Security=true; TrustServerCertificate=True");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -87,6 +87,7 @@ public partial class Obligatorio2024Context : DbContext
 
             entity.HasOne(d => d.Reserva).WithMany(p => p.Climas)
                 .HasForeignKey(d => d.ReservaId)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_Clima_Reservas");
         });
 
@@ -122,6 +123,7 @@ public partial class Obligatorio2024Context : DbContext
 
             entity.HasOne(d => d.Restaurante).WithMany(p => p.Mesas)
                 .HasForeignKey(d => d.RestauranteId)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_Mesas_Restaurantes");
         });
 
@@ -135,10 +137,12 @@ public partial class Obligatorio2024Context : DbContext
 
             entity.HasOne(d => d.Menu).WithMany(p => p.OrdenDetalles)
                 .HasForeignKey(d => d.MenuId)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_OrdenDetalles_Menu");
 
             entity.HasOne(d => d.Orden).WithMany(p => p.OrdenDetalles)
                 .HasForeignKey(d => d.OrdenId)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_OrdenDetalles_Ordenes");
         });
 
@@ -152,6 +156,7 @@ public partial class Obligatorio2024Context : DbContext
 
             entity.HasOne(d => d.Reserva).WithMany(p => p.Ordenes)
                 .HasForeignKey(d => d.ReservaId)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_Ordenes_Reservas");
         });
 
@@ -173,6 +178,7 @@ public partial class Obligatorio2024Context : DbContext
 
             entity.HasOne(d => d.Reserva).WithMany(p => p.Pagos)
                 .HasForeignKey(d => d.ReservaId)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_Pagos_Reservas");
         });
 
@@ -190,10 +196,12 @@ public partial class Obligatorio2024Context : DbContext
 
             entity.HasOne(d => d.Cliente).WithMany(p => p.Reservas)
                 .HasForeignKey(d => d.ClienteId)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_Reservas_Clientes");
 
             entity.HasOne(d => d.Mesa).WithMany(p => p.Reservas)
                 .HasForeignKey(d => d.MesaId)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_Reservas_Mesas");
         });
 
@@ -211,10 +219,12 @@ public partial class Obligatorio2024Context : DbContext
 
             entity.HasOne(d => d.Cliente).WithMany(p => p.Reseñas)
                 .HasForeignKey(d => d.ClienteId)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_Reseñas_Clientes");
 
             entity.HasOne(d => d.Restaurante).WithMany(p => p.Reseñas)
                 .HasForeignKey(d => d.RestauranteId)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_Reseñas_Restaurantes");
         });
 
@@ -256,6 +266,7 @@ public partial class Obligatorio2024Context : DbContext
 
             entity.HasOne(d => d.Rol).WithMany(p => p.RolesPermisos)
                 .HasForeignKey(d => d.RolId)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_RolesPermisos_Roles");
         });
 
@@ -285,6 +296,7 @@ public partial class Obligatorio2024Context : DbContext
 
             entity.HasOne(d => d.Rol).WithMany(p => p.Usuarios)
                 .HasForeignKey(d => d.RolId)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_Usuarios_Roles");
         });
 

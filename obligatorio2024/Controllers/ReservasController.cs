@@ -49,9 +49,13 @@ namespace obligatorio2024.Controllers
         public IActionResult Create()
         {
             ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Id");
-            ViewData["MesaId"] = new SelectList(_context.Mesas, "Id", "Id");
+            ViewData["MesaId"] = new SelectList(_context.Mesas.Include(m => m.Restaurante).Select(m => new {
+                m.Id,
+                Display = m.NumeroMesa + " - " + m.Restaurante.Nombre
+            }), "Id", "Display");
             return View();
         }
+
 
         // POST: Reservas/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -84,10 +88,15 @@ namespace obligatorio2024.Controllers
             {
                 return NotFound();
             }
-            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Id", reserva.ClienteId);
-            ViewData["MesaId"] = new SelectList(_context.Mesas, "Id", "Id", reserva.MesaId);
+
+            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Nombre", reserva.ClienteId);
+            ViewData["MesaId"] = new SelectList(_context.Mesas.Include(m => m.Restaurante).Select(m => new {
+                m.Id,
+                Display = m.NumeroMesa + " - " + m.Restaurante.Nombre
+            }), "Id", "Display", reserva.MesaId);
             return View(reserva);
         }
+
 
         // POST: Reservas/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.

@@ -19,7 +19,7 @@
                 <span asp-validation-for="ClienteId" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="MesaId" class="control-label"></label>
+                <label asp-for="MesaId" class="control-label">Nº Mesa - Nombre resto</label>
                 <select asp-for="MesaId" class="form-control" asp-items="ViewBag.MesaId"></select>
                 <span asp-validation-for="MesaId" class="text-danger"></span>
             </div>
@@ -30,9 +30,15 @@
             </div>
             <div class="form-group">
                 <label asp-for="Estado" class="control-label"></label>
-                <input asp-for="Estado" class="form-control" />
+                <select asp-for="Estado" class="form-control" asp-items="@(new List<SelectListItem>
+                {
+                    new SelectListItem { Value = "Pendiente", Text = "Pendiente" },
+                    new SelectListItem { Value = "Confirmada", Text = "Confirmada" },
+                    new SelectListItem { Value = "Cancelada", Text = "Cancelada" }
+                })"></select>
                 <span asp-validation-for="Estado" class="text-danger"></span>
             </div>
+            <br />
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>

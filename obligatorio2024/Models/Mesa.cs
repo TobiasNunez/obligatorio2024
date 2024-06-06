@@ -13,7 +13,7 @@ public partial class Mesa
     public int Capacidad { get; set; }
 
     [Required]
-    [RegularExpression("Disponible|Reservada|Ocupada", ErrorMessage = "El estado de la mesa debe ser 'Disponible', 'Reservada' o 'Ocupada'.")]
+    [RegularExpression("Disponible|Reservada|Ocupada", ErrorMessage = "El estado de la mesa debe ser 'Disponible', 'Reservada' o 'Ocupada'.")]
     public string Estado { get; set; } = null!;
 
     public int? RestauranteId { get; set; }
