@@ -19,4 +19,5 @@ public partial class Clima
 
     //asi es man vamo arriba
     //Guti gay
+    //xd
 }
