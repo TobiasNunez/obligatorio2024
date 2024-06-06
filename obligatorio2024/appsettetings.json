@@ -1,0 +1,12 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "AllowedHosts": "*",
+  "ConnectionStrings": {
+    "DefaultConnection": "Data Source=GOHANSSJ2;Initial Catalog=obligatorio2024;Integrated Security=true;TrustServerCertificate=True"
+  }
+}
