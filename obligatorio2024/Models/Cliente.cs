@@ -15,6 +15,7 @@ public partial class Cliente
     public string Email { get; set; } = null!;
 
     public string? Telefono { get; set; }
+
     [Required]
     [RegularExpression("Nuevo|Frecuente|VIP", ErrorMessage = "El tipo de cliente debe ser 'Nuevo', 'Frecuente' o 'VIP'.")]
     public string TipoCliente { get; set; } = null!;
