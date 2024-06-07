@@ -1,14 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using obligatorio2024.Models;
+using Microsoft.AspNetCore.Session;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<Obligatorio2024Context>(options =>
-    options.UseSqlServer(connectionString));
-
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30);
@@ -27,23 +26,28 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
-
 app.UseSession();
+app.UseAuthorization();
 
 app.Use(async (context, next) =>
 {
     var userSession = context.Session.GetString("UsuarioEmail");
-    if (string.IsNullOrEmpty(userSession) && !context.Request.Path.Value.Contains("/Usuarios/Login"))
+    var path = context.Request.Path.Value.ToLower();
+
+    // Allow access to Home, Login, and static files without redirection
+    if (string.IsNullOrEmpty(userSession) &&
+        !path.Contains("/usuarios/login") &&
+        !path.Contains("/home") &&
+        !path.StartsWith("/css") &&
+        !path.StartsWith("/js") &&
+        !path.StartsWith("/images"))
     {
-        context.Response.Redirect("/Usuarios/Login");
+        context.Response.Redirect("/Home/Index");
         return;
     }
     await next();
 });
-
-app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
