@@ -2,13 +2,44 @@
 
 @{
     ViewData["Title"] = "Index";
+    var selectedRestauranteId = ViewBag.SelectedRestauranteId as int?;
+    var numeroMesa = ViewBag.NumeroMesa as int?;
 }
 
 <h1>Index</h1>
 
+<form method="get">
+    <div class="form-group">
+        <label for="RestauranteId">Restaurante</label>
+        <select id="RestauranteId" name="restauranteId" class="form-control" onchange="this.form.submit()">
+            @foreach (var item in (SelectList)ViewBag.RestauranteId)
+            {
+                @if (item.Value == selectedRestauranteId.ToString())
+                {
+                    <option value="@item.Value" selected>@item.Text</option>
+                }
+                else
+                {
+                    <option value="@item.Value">@item.Text</option>
+                }
+            }
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="NumeroMesa">Número de Mesa</label>
+        <input type="number" id="NumeroMesa" name="numeroMesa" class="form-control" value="@(numeroMesa?.ToString() ?? "")" />
+    </div>
+    <br />
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Buscar</button>
+        <a href="/Mesas" class="btn btn-secondary">Limpiar</a>
+    </div>
+</form>
+
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+
 <table class="table">
     <thead>
         <tr>
@@ -22,7 +53,7 @@
                 @Html.DisplayNameFor(model => model.Estado)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Restaurante)
+                @Html.DisplayNameFor(model => model.Restaurante.Nombre)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Restaurante.Dirección)
@@ -31,29 +62,30 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.NumeroMesa)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Capacidad)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Estado)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Restaurante.Id)
-            </td>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NumeroMesa)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Capacidad)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Estado)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Restaurante.Nombre)
+                </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Restaurante.Dirección)
                 </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

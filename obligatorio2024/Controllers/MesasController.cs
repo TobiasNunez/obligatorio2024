@@ -15,11 +15,33 @@ public class MesasController : Controller
     }
 
     // GET: Mesas
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(int? restauranteId, int? numeroMesa)
     {
-        var obligatorio2024Context = _context.Mesas.Include(m => m.Restaurante);
-        return View(await obligatorio2024Context.ToListAsync());
+        var restaurantes = await _context.Restaurantes.ToListAsync();
+        ViewBag.RestauranteId = new SelectList(restaurantes, "Id", "Dirección", restauranteId ?? 1);
+        ViewBag.SelectedRestauranteId = restauranteId ?? 1;
+        ViewBag.NumeroMesa = numeroMesa;
+
+        var mesas = _context.Mesas.Include(m => m.Restaurante).AsQueryable();
+
+        if (restauranteId.HasValue)
+        {
+            mesas = mesas.Where(m => m.RestauranteId == restauranteId.Value);
+        }
+        else
+        {
+            mesas = mesas.Where(m => m.RestauranteId == 1);
+        }
+
+        if (numeroMesa.HasValue)
+        {
+            mesas = mesas.Where(m => m.NumeroMesa == numeroMesa.Value);
+        }
+
+        return View(await mesas.OrderBy(m => m.NumeroMesa).ToListAsync());
     }
+
+
 
     // GET: Mesas/Details/5
     public async Task<IActionResult> Details(int? id)
@@ -48,23 +70,27 @@ public class MesasController : Controller
     }
 
     // POST: Mesas/Create
+
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("Id,Capacidad,Estado,RestauranteId")] Mesa mesa)
+    public async Task<IActionResult> Create([Bind("Id,NumeroMesa,Capacidad,Estado,RestauranteId")] Mesa mesa)
     {
         if (ModelState.IsValid)
         {
-            // Calcular el próximo Número de Mesa para el restaurante
-            var maxNumeroMesa = _context.Mesas
-                .Where(m => m.RestauranteId == mesa.RestauranteId)
-                .Max(m => (int?)m.NumeroMesa) ?? 0;
-            mesa.NumeroMesa = maxNumeroMesa + 1;
-
-            _context.Add(mesa);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            // Check if NumeroMesa already exists in the same restaurant
+            bool exists = _context.Mesas.Any(m => m.RestauranteId == mesa.RestauranteId && m.NumeroMesa == mesa.NumeroMesa);
+            if (exists)
+            {
+                ModelState.AddModelError("NumeroMesa", "El número de mesa ya existe en este restaurante.");
+            }
+            else
+            {
+                _context.Add(mesa);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
         }
-        ViewData["RestauranteId"] = new SelectList(_context.Restaurantes, "Id", "Id", mesa.RestauranteId);
+        ViewData["RestauranteId"] = new SelectList(_context.Restaurantes, "Id", "Id"); 
         return View(mesa);
     }
 
@@ -81,7 +107,7 @@ public class MesasController : Controller
         {
             return NotFound();
         }
-        ViewData["RestauranteId"] = new SelectList(_context.Restaurantes, "Id", "Id", mesa.RestauranteId);
+        ViewData["RestauranteId"] = new SelectList(_context.Restaurantes, "Id", "Id"); 
         return View(mesa);
     }
 
@@ -99,8 +125,18 @@ public class MesasController : Controller
         {
             try
             {
-                _context.Update(mesa);
-                await _context.SaveChangesAsync();
+                // Check if NumeroMesa already exists in the same restaurant
+                bool exists = _context.Mesas.Any(m => m.RestauranteId == mesa.RestauranteId && m.NumeroMesa == mesa.NumeroMesa && m.Id != mesa.Id);
+                if (exists)
+                {
+                    ModelState.AddModelError("NumeroMesa", "El número de mesa ya existe en este restaurante.");
+                }
+                else
+                {
+                    _context.Update(mesa);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -113,11 +149,11 @@ public class MesasController : Controller
                     throw;
                 }
             }
-            return RedirectToAction(nameof(Index));
         }
-        ViewData["RestauranteId"] = new SelectList(_context.Restaurantes, "Id", "Id", mesa.RestauranteId);
+        ViewData["RestauranteId"] = new SelectList(_context.Restaurantes, "Id", "Id"); 
         return View(mesa);
     }
+
 
     // GET: Mesas/Delete/5
     public async Task<IActionResult> Delete(int? id)
@@ -146,20 +182,7 @@ public class MesasController : Controller
         var mesa = await _context.Mesas.FindAsync(id);
         if (mesa != null)
         {
-            var restauranteId = mesa.RestauranteId;
-
             _context.Mesas.Remove(mesa);
-            await _context.SaveChangesAsync();
-
-            // Reorganizar los números de mesa dentro del restaurante
-            var mesas = await _context.Mesas
-                .Where(m => m.RestauranteId == restauranteId)
-                .OrderBy(m => m.NumeroMesa)
-                .ToListAsync();
-            for (int i = 0; i < mesas.Count; i++)
-            {
-                mesas[i].NumeroMesa = i + 1;
-            }
             await _context.SaveChangesAsync();
         }
 

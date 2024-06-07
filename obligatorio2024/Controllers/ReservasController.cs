@@ -19,10 +19,26 @@ namespace obligatorio2024.Controllers
         }
 
         // GET: Reservas
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? clienteId, int? numeroMesa)
         {
-            var obligatorio2024Context = _context.Reservas.Include(r => r.Cliente).Include(r => r.Mesa);
-            return View(await obligatorio2024Context.ToListAsync());
+            var clientes = await _context.Clientes.ToListAsync();
+            ViewBag.ClienteId = new SelectList(clientes, "Id", "Nombre", clienteId ?? clientes.FirstOrDefault()?.Id);
+            ViewBag.SelectedClienteId = clienteId ?? clientes.FirstOrDefault()?.Id;
+            ViewBag.NumeroMesa = numeroMesa;
+
+            var reservas = _context.Reservas.Include(r => r.Cliente).Include(r => r.Mesa).ThenInclude(m => m.Restaurante).AsQueryable();
+
+            if (clienteId.HasValue)
+            {
+                reservas = reservas.Where(r => r.ClienteId == clienteId.Value);
+            }
+
+            if (numeroMesa.HasValue)
+            {
+                reservas = reservas.Where(r => r.Mesa.NumeroMesa == numeroMesa.Value);
+            }
+
+            return View(await reservas.OrderBy(r => r.Mesa.NumeroMesa).ToListAsync());
         }
 
         // GET: Reservas/Details/5
@@ -48,11 +64,15 @@ namespace obligatorio2024.Controllers
         // GET: Reservas/Create
         public IActionResult Create()
         {
-            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Id");
-            ViewData["MesaId"] = new SelectList(_context.Mesas.Include(m => m.Restaurante).Select(m => new {
-                m.Id,
-                Display = m.NumeroMesa + " - " + m.Restaurante.Nombre
-            }), "Id", "Display");
+            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Nombre");
+            ViewData["MesaId"] = new SelectList(_context.Mesas
+                .Where(m => m.Estado == "Disponible")
+                .Include(m => m.Restaurante)
+                .Select(m => new
+                {
+                    m.Id,
+                    Display = m.NumeroMesa + " - " + m.Restaurante.Dirección
+                }), "Id", "Display");
             return View();
         }
 
@@ -67,11 +87,27 @@ namespace obligatorio2024.Controllers
             if (ModelState.IsValid)
             {
                 _context.Add(reserva);
+
+                // Actualizar el estado de la mesa a "Reservada"
+                var mesa = await _context.Mesas.FindAsync(reserva.MesaId);
+                if (mesa != null)
+                {
+                    mesa.Estado = "Reservada";
+                    _context.Update(mesa);
+                }
+
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Id", reserva.ClienteId);
-            ViewData["MesaId"] = new SelectList(_context.Mesas, "Id", "Id", reserva.MesaId);
+            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Nombre", reserva.ClienteId);
+            ViewData["MesaId"] = new SelectList(_context.Mesas
+                .Where(m => m.Estado == "Disponible")
+                .Include(m => m.Restaurante)
+                .Select(m => new
+                {
+                    m.Id,
+                    Display = m.NumeroMesa + " - " + m.Restaurante.Dirección
+                }), "Id", "Display", reserva.MesaId);
             return View(reserva);
         }
 
@@ -88,12 +124,15 @@ namespace obligatorio2024.Controllers
             {
                 return NotFound();
             }
-
             ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Nombre", reserva.ClienteId);
-            ViewData["MesaId"] = new SelectList(_context.Mesas.Include(m => m.Restaurante).Select(m => new {
-                m.Id,
-                Display = m.NumeroMesa + " - " + m.Restaurante.Nombre
-            }), "Id", "Display", reserva.MesaId);
+            ViewData["MesaId"] = new SelectList(_context.Mesas
+                .Where(m => m.Estado == "Disponible" || m.Id == reserva.MesaId)
+                .Include(m => m.Restaurante)
+                .Select(m => new
+                {
+                    m.Id,
+                    Display = m.NumeroMesa + " - " + m.Restaurante.Dirección
+                }), "Id", "Display", reserva.MesaId);
             return View(reserva);
         }
 
@@ -114,6 +153,25 @@ namespace obligatorio2024.Controllers
             {
                 try
                 {
+                    // Actualizar el estado de la mesa si cambia
+                    var originalReserva = await _context.Reservas.AsNoTracking().FirstOrDefaultAsync(r => r.Id == id);
+                    if (originalReserva != null && originalReserva.MesaId != reserva.MesaId)
+                    {
+                        var originalMesa = await _context.Mesas.FindAsync(originalReserva.MesaId);
+                        if (originalMesa != null)
+                        {
+                            originalMesa.Estado = "Disponible";
+                            _context.Update(originalMesa);
+                        }
+
+                        var newMesa = await _context.Mesas.FindAsync(reserva.MesaId);
+                        if (newMesa != null)
+                        {
+                            newMesa.Estado = "Reservada";
+                            _context.Update(newMesa);
+                        }
+                    }
+
                     _context.Update(reserva);
                     await _context.SaveChangesAsync();
                 }
@@ -130,8 +188,15 @@ namespace obligatorio2024.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Id", reserva.ClienteId);
-            ViewData["MesaId"] = new SelectList(_context.Mesas, "Id", "Id", reserva.MesaId);
+            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Nombre", reserva.ClienteId);
+            ViewData["MesaId"] = new SelectList(_context.Mesas
+                .Where(m => m.Estado == "Disponible" || m.Id == reserva.MesaId)
+                .Include(m => m.Restaurante)
+                .Select(m => new
+                {
+                    m.Id,
+                    Display = m.NumeroMesa + " - " + m.Restaurante.Dirección
+                }), "Id", "Display", reserva.MesaId);
             return View(reserva);
         }
 
