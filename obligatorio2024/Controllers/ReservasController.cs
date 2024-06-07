@@ -19,26 +19,34 @@ namespace obligatorio2024.Controllers
         }
 
         // GET: Reservas
-        public async Task<IActionResult> Index(int? clienteId, int? numeroMesa)
+        public async Task<IActionResult> Index(int? restauranteId, int? clienteId)
         {
-            var clientes = await _context.Clientes.ToListAsync();
-            ViewBag.ClienteId = new SelectList(clientes, "Id", "Nombre", clienteId ?? clientes.FirstOrDefault()?.Id);
-            ViewBag.SelectedClienteId = clienteId ?? clientes.FirstOrDefault()?.Id;
-            ViewBag.NumeroMesa = numeroMesa;
+            var restaurantes = await _context.Restaurantes.ToListAsync();
+            ViewBag.RestauranteId = new SelectList(restaurantes, "Id", "Dirección", restauranteId ?? 1);
+            ViewBag.SelectedRestauranteId = restauranteId ?? 1;
+            ViewBag.ClienteId = clienteId;
 
-            var reservas = _context.Reservas.Include(r => r.Cliente).Include(r => r.Mesa).ThenInclude(m => m.Restaurante).AsQueryable();
+            var reservas = _context.Reservas
+                .Include(r => r.Cliente)
+                .Include(r => r.Mesa)
+                .ThenInclude(m => m.Restaurante)
+                .AsQueryable();
+
+            if (restauranteId.HasValue)
+            {
+                reservas = reservas.Where(r => r.Mesa.RestauranteId == restauranteId.Value);
+            }
+            else
+            {
+                reservas = reservas.Where(r => r.Mesa.RestauranteId == 1);
+            }
 
             if (clienteId.HasValue)
             {
                 reservas = reservas.Where(r => r.ClienteId == clienteId.Value);
             }
 
-            if (numeroMesa.HasValue)
-            {
-                reservas = reservas.Where(r => r.Mesa.NumeroMesa == numeroMesa.Value);
-            }
-
-            return View(await reservas.OrderBy(r => r.Mesa.NumeroMesa).ToListAsync());
+            return View(await reservas.OrderBy(r => r.FechaReserva).ToListAsync());
         }
 
         // GET: Reservas/Details/5
@@ -64,22 +72,15 @@ namespace obligatorio2024.Controllers
         // GET: Reservas/Create
         public IActionResult Create()
         {
-            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Nombre");
-            ViewData["MesaId"] = new SelectList(_context.Mesas
-                .Where(m => m.Estado == "Disponible")
-                .Include(m => m.Restaurante)
-                .Select(m => new
-                {
-                    m.Id,
-                    Display = m.NumeroMesa + " - " + m.Restaurante.Dirección
-                }), "Id", "Display");
+            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Id");
+            ViewData["MesaId"] = new SelectList(_context.Mesas.Where(m => m.Estado == "Disponible").Include(m => m.Restaurante).Select(m => new {
+                m.Id,
+                Display = m.NumeroMesa + " - " + m.Restaurante.Dirección
+            }), "Id", "Display");
             return View();
         }
 
-
         // POST: Reservas/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,ClienteId,MesaId,FechaReserva,Estado")] Reserva reserva)
@@ -88,7 +89,6 @@ namespace obligatorio2024.Controllers
             {
                 _context.Add(reserva);
 
-                // Actualizar el estado de la mesa a "Reservada"
                 var mesa = await _context.Mesas.FindAsync(reserva.MesaId);
                 if (mesa != null)
                 {
@@ -99,15 +99,11 @@ namespace obligatorio2024.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Nombre", reserva.ClienteId);
-            ViewData["MesaId"] = new SelectList(_context.Mesas
-                .Where(m => m.Estado == "Disponible")
-                .Include(m => m.Restaurante)
-                .Select(m => new
-                {
-                    m.Id,
-                    Display = m.NumeroMesa + " - " + m.Restaurante.Dirección
-                }), "Id", "Display", reserva.MesaId);
+            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Id", reserva.ClienteId);
+            ViewData["MesaId"] = new SelectList(_context.Mesas.Where(m => m.Estado == "Disponible").Include(m => m.Restaurante).Select(m => new {
+                m.Id,
+                Display = m.NumeroMesa + " - " + m.Restaurante.Dirección
+            }), "Id", "Display", reserva.MesaId);
             return View(reserva);
         }
 
@@ -124,22 +120,16 @@ namespace obligatorio2024.Controllers
             {
                 return NotFound();
             }
+
             ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Nombre", reserva.ClienteId);
-            ViewData["MesaId"] = new SelectList(_context.Mesas
-                .Where(m => m.Estado == "Disponible" || m.Id == reserva.MesaId)
-                .Include(m => m.Restaurante)
-                .Select(m => new
-                {
-                    m.Id,
-                    Display = m.NumeroMesa + " - " + m.Restaurante.Dirección
-                }), "Id", "Display", reserva.MesaId);
+            ViewData["MesaId"] = new SelectList(_context.Mesas.Where(m => m.Estado == "Disponible" || m.Id == reserva.MesaId).Include(m => m.Restaurante).Select(m => new {
+                m.Id,
+                Display = m.NumeroMesa + " - " + m.Restaurante.Dirección
+            }), "Id", "Display", reserva.MesaId);
             return View(reserva);
         }
 
-
         // POST: Reservas/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,ClienteId,MesaId,FechaReserva,Estado")] Reserva reserva)
@@ -189,14 +179,10 @@ namespace obligatorio2024.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Nombre", reserva.ClienteId);
-            ViewData["MesaId"] = new SelectList(_context.Mesas
-                .Where(m => m.Estado == "Disponible" || m.Id == reserva.MesaId)
-                .Include(m => m.Restaurante)
-                .Select(m => new
-                {
-                    m.Id,
-                    Display = m.NumeroMesa + " - " + m.Restaurante.Dirección
-                }), "Id", "Display", reserva.MesaId);
+            ViewData["MesaId"] = new SelectList(_context.Mesas.Where(m => m.Estado == "Disponible" || m.Id == reserva.MesaId).Include(m => m.Restaurante).Select(m => new {
+                m.Id,
+                Display = m.NumeroMesa + " - " + m.Restaurante.Dirección
+            }), "Id", "Display", reserva.MesaId);
             return View(reserva);
         }
 
@@ -240,4 +226,5 @@ namespace obligatorio2024.Controllers
             return _context.Reservas.Any(e => e.Id == id);
         }
     }
+
 }

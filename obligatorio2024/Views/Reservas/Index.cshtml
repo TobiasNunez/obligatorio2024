@@ -2,19 +2,19 @@
 
 @{
     ViewData["Title"] = "Index";
-    var selectedClienteId = ViewBag.SelectedClienteId as int?;
-    var numeroMesa = ViewBag.NumeroMesa as int?;
+    var clienteId = ViewBag.ClienteId as int?;
+    var restauranteId = ViewBag.SelectedRestauranteId as int?;
 }
 
-<h1>Index</h1>
+<h1>Reservas</h1>
 
 <form method="get">
     <div class="form-group">
-        <label for="ClienteId">Cliente</label>
-        <select id="ClienteId" name="clienteId" class="form-control" onchange="this.form.submit()">
-            @foreach (var item in (SelectList)ViewBag.ClienteId)
+        <label for="RestauranteId">Restaurante</label>
+        <select id="RestauranteId" name="restauranteId" class="form-control" onchange="this.form.submit()">
+            @foreach (var item in (SelectList)ViewBag.RestauranteId)
             {
-                if (item.Value == selectedClienteId.ToString())
+                @if (item.Value == restauranteId?.ToString())
                 {
                     <option value="@item.Value" selected>@item.Text</option>
                 }
@@ -26,8 +26,8 @@
         </select>
     </div>
     <div class="form-group">
-        <label for="NumeroMesa">Número de Mesa</label>
-        <input type="number" id="NumeroMesa" name="numeroMesa" class="form-control" value="@(numeroMesa?.ToString() ?? "")" />
+        <label for="ClienteId">ID del Cliente</label>
+        <input type="number" id="ClienteId" name="clienteId" class="form-control" value="@(clienteId?.ToString() ?? "")" />
     </div>
     <br />
     <div class="form-group">
@@ -44,19 +44,16 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Mesa.NumeroMesa)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Cliente.Nombre)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.FechaReserva)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Estado)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Mesa.Restaurante.Nombre)
+                @Html.DisplayNameFor(model => model.Cliente.Nombre)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Mesa.NumeroMesa)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Mesa.Restaurante.Dirección)
@@ -65,15 +62,9 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @foreach (var item in Model.OrderByDescending(r => r.FechaReserva))
         {
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Mesa.NumeroMesa)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Cliente.Nombre)
-                </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.FechaReserva)
                 </td>
@@ -81,7 +72,10 @@
                     @Html.DisplayFor(modelItem => item.Estado)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Mesa.Restaurante.Nombre)
+                    @Html.DisplayFor(modelItem => item.Cliente.Nombre)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Mesa.NumeroMesa)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Mesa.Restaurante.Dirección)
