@@ -1,14 +1,71 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Home";
 }
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid">
-      
+<section class="hero">
+    <img src="~/images/placeholder.svg" alt="Restaurant Hero" />
+    <div class="overlay">
+        <div>
+            <h1>Al mal tiempo, buena cara</h1>
+            <p>Vive una experiencia inolvidable.</p>
+        </div>
     </div>
-</nav>
+</section>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<section class="section">
+    <div class="container">
+        <div class="section-title">
+            <h2>Nuestro menú</h2>
+            <p>Explora nuestra deliciosa selección de platos y bebidas..</p>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <div class="card">
+                    <img src="~/images/placeholder.svg" class="card-img-top" alt="Menu Item 1">
+                    <div class="card-body">
+                        <h5 class="card-title">Grilled Salmon</h5>
+                        <p class="card-text">Served with roasted vegetables</p>
+                        <p class="font-weight-bold">$24.99</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Repite para otros items del menú -->
+        </div>
+    </div>
+</section>
+
+<section class="section bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <h2>About Us</h2>
+                <p>Gourmet Delights is a family-owned restaurant that has been serving the community for over 20 years. Our mission is to provide an exceptional dining experience with fresh, locally sourced ingredients and a commitment to sustainability.</p>
+                <p>Our head chef, Julia Smith, has over a decade of experience in the culinary industry and is passionate about creating innovative and flavorful dishes. We take pride in our attention to detail and our dedication to delivering exceptional service to our guests.</p>
+            </div>
+            <div class="col-md-6">
+                <img src="~/images/placeholder.svg" class="img-fluid rounded" alt="About Us">
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="section-title">
+            <h2>Contact Us</h2>
+            <p>Have a question or want to make a reservation? Fill out the form below and we'll get back to you as soon as possible.</p>
+        </div>
+        <form>
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="Name">
+            </div>
+            <div class="form-group">
+                <input type="email" class="form-control" placeholder="Email">
+            </div>
+            <div class="form-group">
+                <textarea class="form-control" placeholder="Message"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Submit</button>
+        </form>
+    </div>
+</section>
