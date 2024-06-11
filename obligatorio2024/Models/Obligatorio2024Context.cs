@@ -41,9 +41,9 @@ public partial class Obligatorio2024Context : DbContext
 
     public virtual DbSet<Usuario> Usuarios { get; set; }
 
-//    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-//        => optionsBuilder.UseSqlServer("Data Source=GOHANSSJ2; Initial Catalog=obligatorio2024; Integrated Security=true; TrustServerCertificate=True");
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Data Source=GOHANSSJ2; Initial Catalog=obligatorio2024; Integrated Security=true; TrustServerCertificate=True");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -93,11 +93,14 @@ public partial class Obligatorio2024Context : DbContext
 
         modelBuilder.Entity<Menu>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Menu__3214EC276B1A492F");
+            entity.HasKey(e => e.Id).HasName("PK__Menu__3214EC2777709245");
 
             entity.ToTable("Menu");
 
             entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.Categoria)
+                .HasMaxLength(100)
+                .IsUnicode(false);
             entity.Property(e => e.Descripción)
                 .HasMaxLength(255)
                 .IsUnicode(false);
@@ -137,7 +140,6 @@ public partial class Obligatorio2024Context : DbContext
 
             entity.HasOne(d => d.Menu).WithMany(p => p.OrdenDetalles)
                 .HasForeignKey(d => d.MenuId)
-                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_OrdenDetalles_Menu");
 
             entity.HasOne(d => d.Orden).WithMany(p => p.OrdenDetalles)

@@ -15,5 +15,7 @@ public partial class Menu
 
     public string? ImagenUrl { get; set; }
 
+    public string Categoria { get; set; } = null!;
+
     public virtual ICollection<OrdenDetalle> OrdenDetalles { get; set; } = new List<OrdenDetalle>();
 }

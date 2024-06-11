@@ -18,13 +18,13 @@ namespace obligatorio2024.Controllers
             _context = context;
         }
 
-        // GET: Menus
+        // GET: Menus1
         public async Task<IActionResult> Index()
         {
             return View(await _context.Menus.ToListAsync());
         }
 
-        // GET: Menus/Details/5
+        // GET: Menus1/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -42,18 +42,18 @@ namespace obligatorio2024.Controllers
             return View(menu);
         }
 
-        // GET: Menus/Create
+        // GET: Menus1/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Menus/Create
+        // POST: Menus1/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,NombrePlato,Descripción,Precio,ImagenUrl")] Menu menu)
+        public async Task<IActionResult> Create([Bind("Id,NombrePlato,Descripción,Precio,ImagenUrl,Categoria")] Menu menu)
         {
             if (ModelState.IsValid)
             {
@@ -64,7 +64,7 @@ namespace obligatorio2024.Controllers
             return View(menu);
         }
 
-        // GET: Menus/Edit/5
+        // GET: Menus1/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -80,12 +80,12 @@ namespace obligatorio2024.Controllers
             return View(menu);
         }
 
-        // POST: Menus/Edit/5
+        // POST: Menus1/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,NombrePlato,Descripción,Precio,ImagenUrl")] Menu menu)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,NombrePlato,Descripción,Precio,ImagenUrl,Categoria")] Menu menu)
         {
             if (id != menu.Id)
             {
@@ -115,7 +115,7 @@ namespace obligatorio2024.Controllers
             return View(menu);
         }
 
-        // GET: Menus/Delete/5
+        // GET: Menus1/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -133,7 +133,7 @@ namespace obligatorio2024.Controllers
             return View(menu);
         }
 
-        // POST: Menus/Delete/5
+        // POST: Menus1/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
