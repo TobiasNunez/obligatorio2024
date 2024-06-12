@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic;
 using obligatorio2024.Models;
 
 namespace obligatorio2024.Controllers
@@ -18,18 +19,21 @@ namespace obligatorio2024.Controllers
             _context = context;
         }
 
+
+
+
         // GET: Reservas
-        public async Task<IActionResult> Index(int? restauranteId, int? clienteId)
+        public async Task<IActionResult> Index(int? restauranteId, string telefonoCliente)
         {
             var restaurantes = await _context.Restaurantes.ToListAsync();
             ViewBag.RestauranteId = new SelectList(restaurantes, "Id", "Dirección", restauranteId ?? 1);
             ViewBag.SelectedRestauranteId = restauranteId ?? 1;
-            ViewBag.ClienteId = clienteId;
+            ViewBag.TelefonoCliente = telefonoCliente;
 
             var reservas = _context.Reservas
                 .Include(r => r.Cliente)
                 .Include(r => r.Mesa)
-                .ThenInclude(m => m.Restaurante)
+                    .ThenInclude(m => m.Restaurante)
                 .AsQueryable();
 
             if (restauranteId.HasValue)
@@ -41,9 +45,21 @@ namespace obligatorio2024.Controllers
                 reservas = reservas.Where(r => r.Mesa.RestauranteId == 1);
             }
 
-            if (clienteId.HasValue)
+            if (!string.IsNullOrEmpty(telefonoCliente))
             {
-                reservas = reservas.Where(r => r.ClienteId == clienteId.Value);
+                // Buscar el cliente por su número de teléfono
+                var cliente = await _context.Clientes.FirstOrDefaultAsync(c => c.Telefono == telefonoCliente);
+                if (cliente != null)
+                {
+                    // Filtrar las reservas por el ID del cliente
+                    reservas = reservas.Where(r => r.ClienteId == cliente.Id);
+                }
+                else
+                {
+                    // Manejar el caso cuando no se encuentra un cliente con el número de teléfono especificado
+                    // Aquí, simplemente devolveremos un conjunto vacío de reservas.
+                    return View(Enumerable.Empty<Reserva>());
+                }
             }
 
             return View(await reservas.OrderBy(r => r.FechaReserva).ToListAsync());
