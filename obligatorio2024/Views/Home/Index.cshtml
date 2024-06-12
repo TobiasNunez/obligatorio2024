@@ -1,4 +1,6 @@
-﻿@{
+﻿@model IEnumerable<obligatorio2024.Models.Menu>
+
+@{
     ViewData["Title"] = "Home";
 }
 
@@ -16,20 +18,22 @@
     <div class="container">
         <div class="section-title">
             <h2>Nuestro menú</h2>
-            <p>Explora nuestra deliciosa selección de platos y bebidas..</p>
+            <p>Explora nuestra deliciosa selección de platos y bebidas.</p>
         </div>
         <div class="row">
-            <div class="col-md-3">
-                <div class="card">
-                    <img src="~/images/placeholder.svg" class="card-img-top" alt="Menu Item 1">
-                    <div class="card-body">
-                        <h5 class="card-title">Grilled Salmon</h5>
-                        <p class="card-text">Served with roasted vegetables</p>
-                        <p class="font-weight-bold">$24.99</p>
+            @foreach (var item in Model)
+            {
+                <div class="col-md-3">
+                    <div class="card">
+                        <img src="@item.ImagenUrl" class="card-img-top" alt="@item.NombrePlato">
+                        <div class="card-body">
+                            <h5 class="card-title">@item.NombrePlato</h5>
+                            <p class="card-text">@item.Descripción</p>
+                            <p class="font-weight-bold">${@item.Precio}</p>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <!-- Repite para otros items del menú -->
+            }
         </div>
     </div>
 </section>
