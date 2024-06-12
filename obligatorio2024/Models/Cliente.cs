@@ -21,3 +21,4 @@ public partial class Cliente
 
     public virtual ICollection<Reseña> Reseñas { get; set; } = new List<Reseña>();
 }
+//pp
