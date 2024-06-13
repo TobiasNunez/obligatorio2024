@@ -17,5 +17,7 @@ public partial class Menu
 
     public string Categoria { get; set; } = null!;
 
+    public string Disponible { get; set; } = null!;
+
     public virtual ICollection<OrdenDetalle> OrdenDetalles { get; set; } = new List<OrdenDetalle>();
 }

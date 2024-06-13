@@ -41,9 +41,9 @@ public partial class Obligatorio2024Context : DbContext
 
     public virtual DbSet<Usuario> Usuarios { get; set; }
 
-//    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-//        => optionsBuilder.UseSqlServer("Data Source=GOHANSSJ2; Initial Catalog=obligatorio2024; Integrated Security=true; TrustServerCertificate=True");
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Data Source=GOHANSSJ2; Initial Catalog=obligatorio2024; Integrated Security=true; TrustServerCertificate=True");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -93,7 +93,7 @@ public partial class Obligatorio2024Context : DbContext
 
         modelBuilder.Entity<Menu>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Menu__3214EC2777709245");
+            entity.HasKey(e => e.Id).HasName("PK__Menu__3214EC2734CD0CE4");
 
             entity.ToTable("Menu");
 
@@ -104,6 +104,10 @@ public partial class Obligatorio2024Context : DbContext
             entity.Property(e => e.Descripción)
                 .HasMaxLength(255)
                 .IsUnicode(false);
+            entity.Property(e => e.Disponible)
+                .HasMaxLength(2)
+                .IsUnicode(false)
+                .HasDefaultValue("Si");
             entity.Property(e => e.ImagenUrl)
                 .HasMaxLength(255)
                 .IsUnicode(false)
@@ -132,7 +136,7 @@ public partial class Obligatorio2024Context : DbContext
 
         modelBuilder.Entity<OrdenDetalle>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__OrdenDet__3214EC271C2F977C");
+            entity.HasKey(e => e.Id).HasName("PK__OrdenDet__3214EC2706636105");
 
             entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.MenuId).HasColumnName("MenuID");
@@ -144,7 +148,6 @@ public partial class Obligatorio2024Context : DbContext
 
             entity.HasOne(d => d.Orden).WithMany(p => p.OrdenDetalles)
                 .HasForeignKey(d => d.OrdenId)
-                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_OrdenDetalles_Ordenes");
         });
 
