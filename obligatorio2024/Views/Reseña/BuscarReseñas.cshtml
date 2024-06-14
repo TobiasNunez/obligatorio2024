@@ -1,0 +1,48 @@
+﻿@model IEnumerable<obligatorio2024.Models.Reseña>
+
+@{
+    ViewData["Title"] = "Buscar Reseñas";
+}
+
+<h1>Buscar Reseñas</h1>
+
+<form method="get" asp-action="BuscarReseñas">
+    <div class="form-group">
+        <label for="RestauranteId">Seleccione un Restaurante</label>
+        <select id="RestauranteId" name="id" class="form-control" asp-items="ViewBag.RestauranteId">
+            <option value="">Seleccione un Restaurante</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Buscar</button>
+    </div>
+</form>
+
+@if (Model != null && Model.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.First().Puntaje)</th>
+                <th>@Html.DisplayNameFor(model => model.First().Comentario)</th>
+                <th>@Html.DisplayNameFor(model => model.First().FechaReseña)</th>
+                <th>@Html.DisplayNameFor(model => model.First().Cliente.Nombre)</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.Puntaje)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Comentario)</td>
+                    <td>@Html.DisplayFor(modelItem => item.FechaReseña)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Cliente.Nombre)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else if (Model != null)
+{
+    <p>No se encontraron reseñas para el restaurante seleccionado.</p>
+}

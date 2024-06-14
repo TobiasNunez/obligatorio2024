@@ -152,26 +152,7 @@ namespace obligatorio2024.Controllers
         {
             return _context.Restaurantes.Any(e => e.Id == id);
         }
-        // GET: Restaurantes/ReseñasRestaurante/5
-        public async Task<IActionResult> ReseñasRestaurante(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var restaurante = await _context.Restaurantes
-                .Include(r => r.Reseñas)
-                .ThenInclude(r => r.Cliente) // Si deseas incluir información sobre el cliente
-                .FirstOrDefaultAsync(m => m.Id == id);
-
-            if (restaurante == null)
-            {
-                return NotFound();
-            }
-
-            return View(restaurante.Reseñas);
-        }
+        
 
     }
 }

@@ -54,8 +54,6 @@ namespace obligatorio2024.Controllers
         }
 
         // POST: Reseña/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,ClienteId,RestauranteId,Puntaje,Comentario,FechaReseña")] Reseña reseña)
@@ -90,8 +88,6 @@ namespace obligatorio2024.Controllers
         }
 
         // POST: Reseña/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,ClienteId,RestauranteId,Puntaje,Comentario,FechaReseña")] Reseña reseña)
@@ -164,6 +160,29 @@ namespace obligatorio2024.Controllers
         private bool ReseñaExists(int id)
         {
             return _context.Reseñas.Any(e => e.Id == id);
+        }
+
+        // Nueva acción para mostrar el formulario de búsqueda y las reseñas
+        public async Task<IActionResult> BuscarReseñas(int? id)
+        {
+            ViewData["RestauranteId"] = new SelectList(_context.Restaurantes, "Id", "Dirección");
+
+            if (id == null)
+            {
+                return View();
+            }
+
+            var restaurante = await _context.Restaurantes
+                .Include(r => r.Reseñas)
+                .ThenInclude(r => r.Cliente)
+                .FirstOrDefaultAsync(r => r.Id == id);
+
+            if (restaurante == null)
+            {
+                return NotFound();
+            }
+
+            return View(restaurante.Reseñas);
         }
     }
 }
