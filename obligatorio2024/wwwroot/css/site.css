@@ -17,6 +17,195 @@ html {
   min-height: 100%;
 }
 
+
 body {
-  margin-bottom: 60px;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #F8FBFF;
+}
+
+.login-container {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 10;
+}
+
+.navbar {
+    flex-shrink: 0;
+     animation: slide-in 1s ease-out;
+}
+.login-button {
+    padding: 5px 15px; /* Ajusta el padding según sea necesario */
+    border: 1px solid #000000; /* Borde de 1 píxel sólido y blanco */
+    border-radius: 10px; /* Esquinas redondeadas con un radio de 10 píxeles */
+    background-color: transparent;
+    color: #000000; /* Color del texto */
+    cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+    text-decoration: none;
+}
+
+.content-wrapper {
+    display: flex;
+    flex-grow: 1;
+}
+
+
+.logo {
+    width: 150px;
+    height: 100px;
+    margin: 0px 20px 0px 8px;
+    animation: slide-in 1s ease-out;
+}
+
+@keyframes slide-in-left {
+    from {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slide-in-right {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.container {
+    background-color: #EBF2FE;
+    padding: 30px;
+    border-bottom: 1.5px solid white;
+}
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 200px;
+    height: 100%;
+    background-color: #F0F6FF;
+    padding: 15px;
+    flex-shrink: 0;
+    animation: slide-in-left 1s ease-out;
+    border: 1.5px solid white;
+}
+
+sidebar a {
+    text-decoration: none;
+    display: block;
+}
+
+.main-content {
+    flex-grow: 1;
+    margin-left: 200px;
+}
+
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+    .main-header h1 {
+        margin: 0;
+    }
+
+body {
+    margin: 0;
+    padding: 0;
+}
+
+
+.hero {
+    background-color: #DBE6F9;
+    padding: 60px 0;
+    border-bottom: 1.5px solid white;
+}
+
+    .hero .container {
+        display: flex;
+        align-items: center;
+    }
+
+    .hero h1 {
+        font-size: 3rem;
+        font-weight: bold;
+        margin-bottom: 20px;
+        animation: slide-in-right 1s ease-out;
+    }
+
+    .hero p {
+        font-size: 1.25rem;
+        color: #6c757d;
+        animation: slide-in-right 1s ease-out;
+    }
+.image-container {
+    width: 100%; /* Ancho del contenedor */
+    height: 300px; /* Altura del contenedor, ajústala según tus necesidades */
+    overflow: hidden; /* Esconde cualquier parte de la imagen que se salga del contenedor */
+    position: relative; /* Necesario para posicionar la imagen de manera absoluta dentro del contenedor */
+}
+
+.row {
+    margin-left: 20px;
+}
+
+.about-us {
+    background-color: #DBE6F9;
+    padding: 30px;
+    border-bottom: 1.5px solid white;
+}
+.hero img {
+    width: 100%;
+    height: 70%;
+    object-fit: cover; /* Ajusta la imagen para cubrir el contenedor sin deformarse */
+    object-position: center;
+    max-width: 500px;
+    border-radius: 10px;
+    animation: slide-in-right 1s ease-out;
+}
+
+    .hero .login-btn {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+    }
+
+
+
+.section-title {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+    .section-title h2 {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+    }
+
+    .section-title p {
+        color: #6c757d;
+    }
+
+.card img {
+    height: 12rem;
+    object-fit: cover;
+}
+
+
+.icono-nav {
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
 }

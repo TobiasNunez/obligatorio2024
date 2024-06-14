@@ -6,180 +6,107 @@
     <title>@ViewData["Title"] - Al mal tiempo, buena cara</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        .navbar {
-            flex-shrink: 0;
-        }
-
-        .content-wrapper {
-            display: flex;
-            flex-grow: 1;
-        }
-
-        .sidebar {
-            width: 200px;
-            background-color: #f8f9fa;
-            padding: 15px;
-            flex-shrink: 0;
-        }
-
-        .main-content {
-            flex-grow: 1;
-            padding: 15px;
-        }
-
-        .main-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-            .main-header h1 {
-                margin: 0;
-            }
-
-        .hero {
-            position: relative;
-            height: 80vh;
-        }
-
-            .hero img {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                position: absolute;
-                top: 0;
-                left: 0;
-            }
-
-            .hero .overlay {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0, 0, 0, 0.5);
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                color: white;
-                text-align: center;
-            }
-
-                .hero .overlay h1 {
-                    font-size: 3rem;
-                }
-
-                .hero .overlay p {
-                    font-size: 1.5rem;
-                }
-
-            .hero .login-btn {
-                position: absolute;
-                top: 1rem;
-                right: 1rem;
-            }
-
-        .section {
-            padding: 2rem 0;
-        }
-
-        .section-title {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-            .section-title h2 {
-                font-size: 2rem;
-                margin-bottom: 1rem;
-            }
-
-            .section-title p {
-                color: #6c757d;
-            }
-
-        .card img {
-            height: 12rem;
-            object-fit: cover;
-        }
-
-    </style>
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Al mal tiempo, buena cara</a>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-end">
-                    <ul class="navbar-nav">
-                        @if (Context.Session.GetString("UsuarioEmail") == null)
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Usuarios" asp-action="Login">Login</a>
-                            </li>
-                        }
-                        else
-                        {
-                            <li class="nav-item">
-                                <form asp-controller="Usuarios" asp-action="LogOff" method="post" class="form-inline">
-                                    <button type="submit" class="btn btn-link nav-link text-dark">Log Off</button>
-                                </form>
-                            </li>
-                        }
-                    </ul>
-                </div>
-            </div>
-        </nav>
+        <div class="login-container">
+            <ul class="navbar-nav">
+                @if (Context.Session.GetString("UsuarioEmail") == null)
+                {
+                    <li class="nav-item">
+                        <a class="login-button" asp-area="" asp-controller="Usuarios" asp-action="Login">Login</a>
+                    </li>
+                }
+                else
+                {
+                    <li class="nav-item">
+                        <form asp-controller="Usuarios" asp-action="LogOff" method="post" >
+                            <button type="submit" class="login-button">Log Off</button>
+                        </form>
+                    </li>
+                }
+            </ul>
+        </div>
     </header>
     <div class="content-wrapper">
         <div class="sidebar">
             <ul class="nav flex-column">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                    <img src="/images/logo-obligatorio2024.png" alt="Mal Tiempo" class="logo">
+                </a>
                 <li class="nav-item">
-                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">
+                        <img src="https://img.icons8.com/?size=100&id=4027&format=png&color=000000" alt="" class="icono-nav" />
+                        Home
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Reseña" asp-action="Index">
+                        <img src="https://img.icons8.com/?size=100&id=5456&format=png&color=000000" alt="" class="icono-nav" />
+                        Reseñas
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Restaurantes" asp-action="Index">
+                        <img src="https://img.icons8.com/?size=100&id=3723&format=png&color=000000" alt="" class="icono-nav" />
+                        Restaurantes
+                    </a>
                 </li>
                 @if (Context.Session.GetString("UsuarioEmail") != null)
                 {
                     <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Clientes" asp-action="Index">Clientes</a>
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Clientes" asp-action="Index">
+                            <img src="https://img.icons8.com/?size=100&id=Aen2dV5qCZcK&format=png&color=000000" alt="" class="icono-nav" />
+                            Clientes
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Menus" asp-action="Index">Menus</a>
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Menus" asp-action="Index">
+                            <img src="https://img.icons8.com/?size=100&id=6899&format=png&color=000000" alt="" class="icono-nav" />
+                            Menus
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Mesas" asp-action="Index">Mesas</a>
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Mesas" asp-action="Index">
+                            <img src="https://img.icons8.com/?size=100&id=eR63rSMC27c2&format=png&color=000000" alt="" class="icono-nav" />
+                            Mesas
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="OrdenDetalles" asp-action="Index">OrdenDetalles</a>
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Ordenes" asp-action="Index">
+                            <img src="https://img.icons8.com/?size=100&id=4255&format=png&color=000000" alt="" class="icono-nav" />
+                            Ordenes
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Ordenes" asp-action="Index">Ordenes</a>
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Pagoes" asp-action="Index">
+                            <img src="https://img.icons8.com/?size=100&id=77124&format=png&color=000000" alt="" class="icono-nav" />
+                            Pagos
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Pagoes" asp-action="Index">Pago</a>
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Reseña" asp-action="Index">
+                            <img src="https://img.icons8.com/?size=100&id=5456&format=png&color=000000" alt="" class="icono-nav" />
+                            Reseñas
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Reseña" asp-action="Index">Reseña</a>
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Reservas" asp-action="Index">
+                            <img src="https://img.icons8.com/?size=100&id=4027&format=png&color=000000" alt="" class="icono-nav" />
+                            Reservas
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Reservas" asp-action="Index">Reservas</a>
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Usuarios" asp-action="Index">
+                            <img src="https://img.icons8.com/?size=100&id=123486&format=png&color=000000" alt="" class="icono-nav" />
+                            Usuarios
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Restaurantes" asp-action="Index">Restaurantes</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Roles" asp-action="Index">Roles</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="RolesPermisoes" asp-action="Index">RolesPermiso</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Usuarios" asp-action="Index">Usuarios</a>
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Roles" asp-action="Index">
+                            <img src="https://img.icons8.com/?size=100&id=uHls6vb2ek05&format=png&color=000000" alt="" class="icono-nav" />
+                            Roles
+                        </a>
                     </li>
                 }
             </ul>
