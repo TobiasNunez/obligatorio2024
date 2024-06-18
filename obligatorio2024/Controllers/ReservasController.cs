@@ -21,7 +21,6 @@ namespace obligatorio2024.Controllers
 
 
 
-
         // GET: Reservas
         public async Task<IActionResult> Index(int? restauranteId, string telefonoCliente)
         {
@@ -85,10 +84,8 @@ namespace obligatorio2024.Controllers
             return View(reserva);
         }
 
-        // GET: Reservas/Create
         public IActionResult Create()
         {
-            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Id");
             ViewData["MesaId"] = new SelectList(_context.Mesas.Where(m => m.Estado == "Disponible").Include(m => m.Restaurante).Select(m => new {
                 m.Id,
                 Display = m.NumeroMesa + " - " + m.Restaurante.Dirección
@@ -99,10 +96,22 @@ namespace obligatorio2024.Controllers
         // POST: Reservas/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,ClienteId,MesaId,FechaReserva,Estado")] Reserva reserva)
+        public async Task<IActionResult> Create(string telefonoCliente, [Bind("MesaId,FechaReserva,Estado")] Reserva reserva)
         {
+            var cliente = await _context.Clientes.FirstOrDefaultAsync(c => c.Telefono == telefonoCliente);
+            if (cliente == null)
+            {
+                ViewBag.ErrorMessage = "No se encontró un cliente con este número de teléfono.";
+                ViewData["MesaId"] = new SelectList(_context.Mesas.Where(m => m.Estado == "Disponible").Include(m => m.Restaurante).Select(m => new {
+                    m.Id,
+                    Display = m.NumeroMesa + " - " + m.Restaurante.Dirección
+                }), "Id", "Display", reserva.MesaId);
+                return View(reserva);
+            }
+
             if (ModelState.IsValid)
             {
+                reserva.ClienteId = cliente.Id;
                 _context.Add(reserva);
 
                 var mesa = await _context.Mesas.FindAsync(reserva.MesaId);
@@ -115,7 +124,6 @@ namespace obligatorio2024.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Id", reserva.ClienteId);
             ViewData["MesaId"] = new SelectList(_context.Mesas.Where(m => m.Estado == "Disponible").Include(m => m.Restaurante).Select(m => new {
                 m.Id,
                 Display = m.NumeroMesa + " - " + m.Restaurante.Dirección
@@ -131,13 +139,15 @@ namespace obligatorio2024.Controllers
                 return NotFound();
             }
 
-            var reserva = await _context.Reservas.FindAsync(id);
+            var reserva = await _context.Reservas
+                .Include(r => r.Cliente)
+                .FirstOrDefaultAsync(r => r.Id == id);
             if (reserva == null)
             {
                 return NotFound();
             }
 
-            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Nombre", reserva.ClienteId);
+            ViewBag.TelefonoCliente = reserva.Cliente?.Telefono;
             ViewData["MesaId"] = new SelectList(_context.Mesas.Where(m => m.Estado == "Disponible" || m.Id == reserva.MesaId).Include(m => m.Restaurante).Select(m => new {
                 m.Id,
                 Display = m.NumeroMesa + " - " + m.Restaurante.Dirección
@@ -148,18 +158,29 @@ namespace obligatorio2024.Controllers
         // POST: Reservas/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,ClienteId,MesaId,FechaReserva,Estado")] Reserva reserva)
+        public async Task<IActionResult> Edit(int id, string telefonoCliente, [Bind("Id,MesaId,FechaReserva,Estado")] Reserva reserva)
         {
             if (id != reserva.Id)
             {
                 return NotFound();
             }
 
+            var cliente = await _context.Clientes.FirstOrDefaultAsync(c => c.Telefono == telefonoCliente);
+            if (cliente == null)
+            {
+                ViewBag.ErrorMessage = "No se encontró un cliente con este número de teléfono.";
+                ViewData["MesaId"] = new SelectList(_context.Mesas.Where(m => m.Estado == "Disponible" || m.Id == reserva.MesaId).Include(m => m.Restaurante).Select(m => new {
+                    m.Id,
+                    Display = m.NumeroMesa + " - " + m.Restaurante.Dirección
+                }), "Id", "Display", reserva.MesaId);
+                return View(reserva);
+            }
+
             if (ModelState.IsValid)
             {
+                reserva.ClienteId = cliente.Id;
                 try
                 {
-                    // Actualizar el estado de la mesa si cambia
                     var originalReserva = await _context.Reservas.AsNoTracking().FirstOrDefaultAsync(r => r.Id == id);
                     if (originalReserva != null && originalReserva.MesaId != reserva.MesaId)
                     {
@@ -194,7 +215,6 @@ namespace obligatorio2024.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Nombre", reserva.ClienteId);
             ViewData["MesaId"] = new SelectList(_context.Mesas.Where(m => m.Estado == "Disponible" || m.Id == reserva.MesaId).Include(m => m.Restaurante).Select(m => new {
                 m.Id,
                 Display = m.NumeroMesa + " - " + m.Restaurante.Dirección

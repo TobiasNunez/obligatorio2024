@@ -19,9 +19,17 @@ namespace obligatorio2024.Controllers
         }
 
         // GET: Clientes
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string telefono)
         {
-            return View(await _context.Clientes.ToListAsync());
+            var clientes = from c in _context.Clientes
+                           select c;
+
+            if (!string.IsNullOrEmpty(telefono))
+            {
+                clientes = clientes.Where(c => c.Telefono.Contains(telefono));
+            }
+
+            return View(await clientes.ToListAsync());
         }
 
         // GET: Clientes/Details/5
@@ -81,8 +89,6 @@ namespace obligatorio2024.Controllers
         }
 
         // POST: Clientes/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Nombre,Apellido,Email,Telefono,TipoCliente")] Cliente cliente)
@@ -154,3 +160,4 @@ namespace obligatorio2024.Controllers
         }
     }
 }
+
