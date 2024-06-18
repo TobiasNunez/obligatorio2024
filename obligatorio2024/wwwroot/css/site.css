@@ -22,8 +22,66 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    background-color: #F8FBFF;
+    background-color: #F0F0EE;
 }
+
+
+.table {
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 1rem;
+    background-color: transparent;
+    border-collapse: collapse;
+}
+
+    .table th, .table td {
+        padding: 0.75rem;
+        vertical-align: top;
+        border-top: 1px solid #dee2e6;
+    }
+
+    .table thead th {
+        vertical-align: bottom;
+        border-bottom: 1px solid #dee2e6;
+        background-color: #500B0B; /* Color de fondo del encabezado */
+        color: #FFFF;
+    }
+
+    .table tbody + tbody {
+        border-top: 1px solid #dee2e6;
+    }
+
+.table-sm th, .table-sm td {
+    padding: 0.3rem;
+}
+
+.table-bordered {
+    border: 1px solid #dee2e6;
+}
+
+    .table-bordered th, .table-bordered td {
+        border: 1px solid #dee2e6;
+    }
+
+    .table-bordered thead th, .table-bordered thead td {
+        border-bottom-width: 2px;
+    }
+
+.table-hover tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.075);
+}
+
+.table-primary, .table-primary > th, .table-primary > td {
+    background-color: #b8daff;
+}
+
+.table-hover .table-primary:hover {
+    background-color: #9fcdff;
+}
+
+    .table-hover .table-primary:hover > td, .table-hover .table-primary:hover > th {
+        background-color: #9fcdff;
+    }
 
 .login-container {
     position: absolute;
@@ -38,10 +96,10 @@ body {
 }
 .login-button {
     padding: 5px 15px; /* Ajusta el padding según sea necesario */
-    border: 1px solid #000000; /* Borde de 1 píxel sólido y blanco */
+    border: 1px solid #FFFF; /* Borde de 1 píxel sólido y blanco */
     border-radius: 10px; /* Esquinas redondeadas con un radio de 10 píxeles */
     background-color: transparent;
-    color: #000000; /* Color del texto */
+    color: #FFFF; /* Color del texto */
     cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
     text-decoration: none;
 }
@@ -84,7 +142,7 @@ body {
 }
 
 .container {
-    background-color: #EBF2FE;
+    background-color: #F0F0EE;
     padding: 30px;
     border-bottom: 1.5px solid white;
 }
@@ -94,7 +152,7 @@ body {
     left: 0;
     width: 200px;
     height: 100%;
-    background-color: #F0F6FF;
+    background-color: #F0F0EE;
     padding: 15px;
     flex-shrink: 0;
     animation: slide-in-left 1s ease-out;
@@ -128,7 +186,7 @@ body {
 
 
 .hero {
-    background-color: #DBE6F9;
+    background-color: #500B0B;
     padding: 60px 0;
     border-bottom: 1.5px solid white;
 }
@@ -147,7 +205,8 @@ body {
 
     .hero p {
         font-size: 1.25rem;
-        color: #6c757d;
+        color: #FFFF;
+        text-align:center;
         animation: slide-in-right 1s ease-out;
     }
 .image-container {
@@ -162,25 +221,31 @@ body {
 }
 
 .about-us {
-    background-color: #DBE6F9;
+    background-color: #500B0B;
     padding: 30px;
+    color: #FFFF;
     border-bottom: 1.5px solid white;
 }
-.hero img {
-    width: 100%;
-    height: 70%;
-    object-fit: cover; /* Ajusta la imagen para cubrir el contenedor sin deformarse */
-    object-position: center;
-    max-width: 500px;
-    border-radius: 10px;
-    animation: slide-in-right 1s ease-out;
-}
 
-    .hero .login-btn {
+    .about-us h2 {
+        color: #AB9746;
+    }
+
+    .hero img {
+        width: 100%;
+        height: 70%;
+        object-fit: cover; /* Ajusta la imagen para cubrir el contenedor sin deformarse */
+        object-position: center;
+        max-width: 500px;
+        border-radius: 10px;
+        animation: slide-in-right 1s ease-out;
+    }
+
+.hero .login-btn {
         position: absolute;
         top: 1rem;
         right: 1rem;
-    }
+}
 
 
 
@@ -192,10 +257,11 @@ body {
     .section-title h2 {
         font-size: 2rem;
         margin-bottom: 1rem;
+        color: #AB9746;
     }
 
     .section-title p {
-        color: #6c757d;
+        color: #000000;
     }
 
 .card img {
