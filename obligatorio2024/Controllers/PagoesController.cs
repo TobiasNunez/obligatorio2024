@@ -50,7 +50,6 @@ namespace obligatorio2024.Controllers
         // GET: Pagoes/Create
         public IActionResult Create()
         {
-            ViewData["ReservaId"] = new SelectList(_context.Reservas, "Id", "Id");
             return View();
         }
 
@@ -61,15 +60,28 @@ namespace obligatorio2024.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Verificar si la reserva existe
+                var reserva = await _context.Reservas.FindAsync(pago.ReservaId);
+                if (reserva == null)
+                {
+                    ModelState.AddModelError("ReservaId", "La reserva no existe.");
+                    return View(pago);
+                }
+
+                // Verificar si ya existe un pago para la misma reserva
+                var existingPago = await _context.Pagos
+                    .FirstOrDefaultAsync(p => p.ReservaId == pago.ReservaId && p.Id != pago.Id);
+                if (existingPago != null)
+                {
+                    ModelState.AddModelError("ReservaId", "Ya existe un pago para esta reserva.");
+                    return View(pago);
+                }
+
                 var nuevoPago = await _pagoService.CrearPagoAsync(pago.Monto, pago.Moneda, pago.MetodoPago);
                 nuevoPago.ReservaId = pago.ReservaId;
                 nuevoPago.FechaPago = DateTime.Now;
 
-                var reserva = await _context.Reservas
-                    .Include(r => r.Cliente)
-                    .FirstOrDefaultAsync(r => r.Id == nuevoPago.ReservaId);
-
-                if (reserva != null && reserva.Cliente != null)
+                if (reserva.Cliente != null)
                 {
                     nuevoPago.Monto = AplicarDescuento(nuevoPago.Monto, reserva.Cliente.TipoCliente);
                 }
@@ -78,11 +90,9 @@ namespace obligatorio2024.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ReservaId"] = new SelectList(_context.Reservas, "Id", "Id", pago.ReservaId);
             return View(pago);
         }
 
-        // GET: Pagoes/Edit/5
         // GET: Pagoes/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -96,14 +106,13 @@ namespace obligatorio2024.Controllers
             {
                 return NotFound();
             }
-            ViewData["ReservaId"] = new SelectList(_context.Reservas, "Id", "Id", pago.ReservaId);
             return View(pago);
         }
 
         // POST: Pagoes/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,ReservaId,Monto,MetodoPago,Moneda,TipoCambio")] Pago pago)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Monto,MetodoPago,Moneda,TipoCambio")] Pago pago)
         {
             if (id != pago.Id)
             {
@@ -121,7 +130,8 @@ namespace obligatorio2024.Controllers
                         return NotFound();
                     }
 
-                    // Mantener los valores originales que no se modifican desde el formulario
+                    // Mantener el ReservaId original y la FechaPago
+                    pago.ReservaId = pagoOriginal.ReservaId;
                     pago.FechaPago = pagoOriginal.FechaPago;
 
                     // Obtener la reserva y el cliente asociado para aplicar el descuento
@@ -150,7 +160,6 @@ namespace obligatorio2024.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ReservaId"] = new SelectList(_context.Reservas, "Id", "Id", pago.ReservaId);
             return View(pago);
         }
 
@@ -208,3 +217,7 @@ namespace obligatorio2024.Controllers
         }
     }
 }
+
+
+
+
