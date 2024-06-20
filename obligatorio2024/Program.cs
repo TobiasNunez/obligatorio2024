@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using obligatorio2024.Models;
+using obligatorio2024.Service;
 using Microsoft.AspNetCore.Session;
+using RestSharp;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +16,10 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
+
+// Registro de servicios
+builder.Services.AddScoped<CurrencyService>();
+builder.Services.AddScoped<PagoService>();
 
 var app = builder.Build();
 
