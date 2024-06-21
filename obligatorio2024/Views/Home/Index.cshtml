@@ -23,25 +23,23 @@
 <section class="section">
     <div class="container">
         <div class="section-title">
-            <h2>Nuestro menú</h2>
+            <h2>Tu restaurante de preferencia</h2>
             <p>Explora nuestra deliciosa selección de platos y bebidas.</p>
         </div>
-        <div class="row">
-            @foreach (var item in Model)
-            {
-                <div class="col-md-3">
-                    <div class="card">
-                        <img src="@item.ImagenUrl" class="card-img-top" alt="@item.NombrePlato">
-                        <div class="card-body">
-                            <h5 class="card-title">@item.NombrePlato</h5>
-                            <p class="card-text">@item.Descripción</p>
-                            <p class="font-weight-bold">$@item.Precio</p>
-                        </div>
-                    </div>
+        <section class="container-slider">
+            <div class="slider-wrapper">
+                <div class="slider">
+                    <img id="slide-1" src="https://images.unsplash.com/photo-1533777857889-4be7c70b33f7?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="3D rendering of an imaginary orange planet in space" />
+                    <img id="slide-2" src="https://images.unsplash.com/photo-1592861956120-e524fc739696?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="3D rendering of an imaginary green planet in space" />
+                    <img id="slide-3" src="https://images.unsplash.com/photo-1424847651672-bf20a4b0982b?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="3D rendering of an imaginary blue planet in space" />
                 </div>
-            }
-        </div>
-    </div>
+                <div class="slider-nav">
+                    <a href="#slide-1"></a>
+                    <a href="#slide-2"></a>
+                    <a href="#slide-3"></a>
+                </div>
+            </div>
+        </section>
 </section>
 <section class="about-us">
     <div class="image-container">
@@ -78,3 +76,38 @@
         </form>
     </div>
 </section>
+
+@section Scripts {
+    <script>
+        let slideIndex = 1;
+        showSlides(slideIndex);
+
+        function plusSlides(n) {
+            showSlides(slideIndex += n);
+        }
+
+        function currentSlide(n) {
+            showSlides(slideIndex = n);
+        }
+
+        function showSlides(n) {
+            let i;
+            let slides = document.getElementsByClassName("mySlides");
+            let dots = document.getElementsByClassName("dot");
+            if (n > slides.length) { slideIndex = 1 }
+            if (n < 1) { slideIndex = slides.length }
+            for (i = 0; i < slides.length; i++) {
+                slides[i].style.display = "none";
+            }
+            slides[slideIndex - 1].style.display = "block";
+            for (i = 0; i < dots.length; i++) {
+                dots[i].className = dots[i].className.replace(" active", "");
+            }
+            dots[slideIndex - 1].className += " active";
+        }
+
+        setInterval(() => {
+            plusSlides(1);
+        }, 5000);
+    </script>
+}

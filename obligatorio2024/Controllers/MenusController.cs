@@ -152,5 +152,76 @@ namespace obligatorio2024.Controllers
         {
             return _context.Menus.Any(e => e.Id == id);
         }
+
+        public async Task<IActionResult> Entradas()
+        {
+            var category = "Entradas";
+            var menus = await _context.Menus.Where(m => m.Categoria == category).ToListAsync();
+            ViewData["Category"] = category;
+            return View("MenuCategoria", menus);
+        }
+
+        // Acción para Platos Principales
+        public async Task<IActionResult> PlatosPrincipales()
+        {
+            var category = "Platos Principales";
+            var menus = await _context.Menus.Where(m => m.Categoria == category).ToListAsync();
+            ViewData["Category"] = category;
+            return View("MenuCategoria", menus);
+        }
+
+        // Acción para Guarniciones
+        public async Task<IActionResult> Guarniciones()
+        {
+            var category = "Guarniciones";
+            var menus = await _context.Menus.Where(m => m.Categoria == category).ToListAsync();
+            ViewData["Category"] = category;
+            return View("MenuCategoria", menus);
+        }
+
+        // Acción para Postres
+        public async Task<IActionResult> Postres()
+        {
+            var category = "Postres";
+            var menus = await _context.Menus.Where(m => m.Categoria == category).ToListAsync();
+            ViewData["Category"] = category;
+            return View("MenuCategoria", menus);
+        }
+
+        // Acción para Menús Especiales
+        public async Task<IActionResult> MenusEspeciales()
+        {
+            var category = "Menús Especiales";
+            var menus = await _context.Menus.Where(m => m.Categoria == category).ToListAsync();
+            ViewData["Category"] = category;
+            return View("MenuCategoria", menus);
+        }
+
+        // Acción para Bebidas
+        public async Task<IActionResult> Bebidas()
+        {
+            var category = "Bebidas";
+            var menus = await _context.Menus.Where(m => m.Categoria == category).ToListAsync();
+            ViewData["Category"] = category;
+            return View("MenuCategoria", menus);
+        }
+
+        // Acción para Bebidas Alcohólicas
+        public async Task<IActionResult> BebidasAlcoholicas()
+        {
+            var category = "Bebidas Alcohólicas";
+            var menus = await _context.Menus.Where(m => m.Categoria == category).ToListAsync();
+            ViewData["Category"] = category;
+            return View("MenuCategoria", menus);
+        }
+
+        // Acción para Brunch
+        public async Task<IActionResult> Brunch()
+        {
+            var category = "Brunch";
+            var menus = await _context.Menus.Where(m => m.Categoria == category).ToListAsync();
+            ViewData["Category"] = category;
+            return View("MenuCategoria", menus);
+        }
     }
 }

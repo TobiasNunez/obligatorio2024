@@ -6,6 +6,12 @@
     <title>@ViewData["Title"] - Al mal tiempo, buena cara</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <style>
+        .submenu-categories {
+            font-size: 0.9em;
+            margin-left: 15px;
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -20,7 +26,7 @@
                 else
                 {
                     <li class="nav-item">
-                        <form asp-controller="Usuarios" asp-action="LogOff" method="post" >
+                        <form asp-controller="Usuarios" asp-action="LogOff" method="post">
                             <button type="submit" class="login-button">Log Off</button>
                         </form>
                     </li>
@@ -55,16 +61,38 @@
                 @if (Context.Session.GetString("UsuarioEmail") != null)
                 {
                     <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Clientes" asp-action="Index">
-                            <img src="https://img.icons8.com/?size=100&id=Aen2dV5qCZcK&format=png&color=000000" alt="" class="icono-nav" />
-                            Clientes
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Menus" asp-action="Index">
+                        <a class="nav-link text-dark" data-bs-toggle="collapse" href="#menuClienteSubMenu" role="button" aria-expanded="false" aria-controls="menuClienteSubMenu">
                             <img src="https://img.icons8.com/?size=100&id=6899&format=png&color=000000" alt="" class="icono-nav" />
-                            Menus
+                            Menú Cliente
                         </a>
+                        <div class="collapse" id="menuClienteSubMenu">
+                            <ul class="nav flex-column ms-3 submenu-categories">
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Menus" asp-action="Entradas">Entradas</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Menus" asp-action="PlatosPrincipales">Platos Principales</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Menus" asp-action="Guarniciones">Guarniciones</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Menus" asp-action="Postres">Postres</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Menus" asp-action="MenusEspeciales">Menús Especiales</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Menus" asp-action="Bebidas">Bebidas</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Menus" asp-action="BebidasAlcoholicas">Bebidas Alcohólicas</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Menus" asp-action="Brunch">Brunch</a>
+                                </li>
+                            </ul>
+                        </div>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-dark" asp-area="" asp-controller="Mesas" asp-action="Index">
@@ -76,6 +104,12 @@
                         <a class="nav-link text-dark" asp-area="" asp-controller="Ordenes" asp-action="Index">
                             <img src="https://img.icons8.com/?size=100&id=4255&format=png&color=000000" alt="" class="icono-nav" />
                             Ordenes
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Menus" asp-action="Index">
+                            <img src="https://img.icons8.com/?size=100&id=6899&format=png&color=000000" alt="" class="icono-nav" />
+                            Menus
                         </a>
                     </li>
                     <li class="nav-item">
