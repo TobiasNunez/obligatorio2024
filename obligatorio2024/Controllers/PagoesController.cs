@@ -109,6 +109,7 @@ namespace obligatorio2024.Controllers
             return View(pago);
         }
 
+
         // POST: Pagoes/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -123,28 +124,37 @@ namespace obligatorio2024.Controllers
             {
                 try
                 {
-                    // Obtener el pago original para mantener las propiedades que no se modifican desde el formulario
-                    var pagoOriginal = await _context.Pagos.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id);
+                    // Obtener el pago original
+                    var pagoOriginal = await _context.Pagos.FindAsync(id);
                     if (pagoOriginal == null)
                     {
                         return NotFound();
                     }
 
-                    // Mantener el ReservaId original y la FechaPago
-                    pago.ReservaId = pagoOriginal.ReservaId;
-                    pago.FechaPago = pagoOriginal.FechaPago;
+                    // Utilizar CrearPagoAsync para calcular el tipo de cambio
+                    var nuevoPago = await _pagoService.CrearPagoAsync(pago.Monto, pago.Moneda, pago.MetodoPago);
+
+                    // Actualizar los valores del objeto original con los valores del objeto editado
+                    pagoOriginal.Monto = nuevoPago.Monto;  // Monto convertido
+                    pagoOriginal.MetodoPago = pago.MetodoPago;
+                    pagoOriginal.Moneda = pago.Moneda;
+                    pagoOriginal.TipoCambio = nuevoPago.TipoCambio;
+
+                    // Mantener el ReservaId y la FechaPago originales
+                    pagoOriginal.ReservaId = pagoOriginal.ReservaId;
+                    pagoOriginal.FechaPago = pagoOriginal.FechaPago;
 
                     // Obtener la reserva y el cliente asociado para aplicar el descuento
                     var reserva = await _context.Reservas
                         .Include(r => r.Cliente)
-                        .FirstOrDefaultAsync(r => r.Id == pago.ReservaId);
+                        .FirstOrDefaultAsync(r => r.Id == pagoOriginal.ReservaId);
 
                     if (reserva != null && reserva.Cliente != null)
                     {
-                        pago.Monto = AplicarDescuento(pago.Monto, reserva.Cliente.TipoCliente);
+                        pagoOriginal.Monto = AplicarDescuento(pagoOriginal.Monto, reserva.Cliente.TipoCliente);
                     }
 
-                    _context.Update(pago);
+                    _context.Update(pagoOriginal);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -162,6 +172,11 @@ namespace obligatorio2024.Controllers
             }
             return View(pago);
         }
+
+
+
+
+
 
         // GET: Pagoes/Delete/5
         public async Task<IActionResult> Delete(int? id)
