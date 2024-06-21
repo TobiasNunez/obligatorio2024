@@ -171,7 +171,6 @@ body {
     background-color: #F0F0EE;
     padding: 15px;
     flex-shrink: 0;
-    animation: slide-in-left 1s ease-out;
     border: 1.5px solid white;
 }
 
