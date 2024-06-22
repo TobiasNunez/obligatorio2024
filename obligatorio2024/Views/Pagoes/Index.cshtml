@@ -1,70 +1,64 @@
 ﻿@model IEnumerable<obligatorio2024.Models.Pago>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Pagos";
+    var selectedRestauranteId = ViewBag.SelectedRestauranteId as int?;
 }
 
-<h1>Index</h1>
+<h1>Pagos</h1>
+
+<form method="get">
+    <div class="form-group">
+        <label for="RestauranteId">Restaurante</label>
+        <select id="RestauranteId" name="restauranteId" class="form-control" onchange="this.form.submit()">
+            @foreach (var item in (SelectList)ViewBag.RestauranteId)
+            {
+                @if (item.Value == selectedRestauranteId.ToString())
+                {
+                    <option value="@item.Value" selected>@item.Text</option>
+                }
+                else
+                {
+                    <option value="@item.Value">@item.Text</option>
+                }
+            }
+        </select>
+    </div>
+    <br />
+</form>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-success">Create New</a>
 </p>
-<table class="table">
+
+<table class="table table-bordered">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Reserva.Cliente.Nombre)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Monto)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FechaPago)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MetodoPago)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Moneda)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TipoCambio)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Reserva)
-            </th>
-            <th></th>
+            <th>@Html.DisplayNameFor(model => model.Reserva.Cliente.Nombre)</th>
+            <th>@Html.DisplayNameFor(model => model.Monto)</th>
+            <th>@Html.DisplayNameFor(model => model.FechaPago)</th>
+            <th>@Html.DisplayNameFor(model => model.MetodoPago)</th>
+            <th>@Html.DisplayNameFor(model => model.Moneda)</th>
+            <th>@Html.DisplayNameFor(model => model.TipoCambio)</th>
+            <th>@Html.DisplayNameFor(model => model.Reserva.Id)</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
             <tr>
+                <td>@Html.DisplayFor(modelItem => item.Reserva.Cliente.Nombre)</td>
+                <td>@Html.DisplayFor(modelItem => item.Monto)</td>
+                <td>@Html.DisplayFor(modelItem => item.FechaPago)</td>
+                <td>@Html.DisplayFor(modelItem => item.MetodoPago)</td>
+                <td>@Html.DisplayFor(modelItem => item.Moneda)</td>
+                <td>@Html.DisplayFor(modelItem => item.TipoCambio)</td>
+                <td>@Html.DisplayFor(modelItem => item.Reserva.Id)</td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Reserva.Cliente.Nombre)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Monto)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.FechaPago)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.MetodoPago)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Moneda)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.TipoCambio)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Reserva.Id)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary">Edit</a>
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info">Details</a>
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Delete</a>
                 </td>
             </tr>
         }

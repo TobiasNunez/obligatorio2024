@@ -326,6 +326,7 @@ img {
 }
 
 .about-us {
+    animation: slide-in-left 1s ease-out;
     background-color: #500B0B;
     padding: 30px;
     color: #FFFF;

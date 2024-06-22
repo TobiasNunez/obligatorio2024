@@ -19,10 +19,27 @@ namespace obligatorio2024.Controllers
         }
 
         // GET: Reseña
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? restauranteId)
         {
-            var obligatorio2024Context = _context.Reseñas.Include(r => r.Cliente).Include(r => r.Restaurante);
-            return View(await obligatorio2024Context.ToListAsync());
+            var restaurantes = await _context.Restaurantes.ToListAsync();
+            ViewBag.RestauranteId = new SelectList(restaurantes, "Id", "Dirección", restauranteId ?? 1);
+            ViewBag.SelectedRestauranteId = restauranteId ?? 1;
+
+            var reseñas = _context.Reseñas
+                .Include(r => r.Cliente)
+                .Include(r => r.Restaurante)
+                .AsQueryable();
+
+            if (restauranteId.HasValue)
+            {
+                reseñas = reseñas.Where(r => r.RestauranteId == restauranteId.Value);
+            }
+            else
+            {
+                reseñas = reseñas.Where(r => r.RestauranteId == 1);
+            }
+
+            return View(await reseñas.ToListAsync());
         }
 
         // GET: Reseña/Details/5
@@ -48,8 +65,8 @@ namespace obligatorio2024.Controllers
         // GET: Reseña/Create
         public IActionResult Create()
         {
-            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Id");
-            ViewData["RestauranteId"] = new SelectList(_context.Restaurantes, "Id", "Id");
+            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Nombre");
+            ViewData["RestauranteId"] = new SelectList(_context.Restaurantes, "Id", "Nombre");
             return View();
         }
 
@@ -64,8 +81,8 @@ namespace obligatorio2024.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Id", reseña.ClienteId);
-            ViewData["RestauranteId"] = new SelectList(_context.Restaurantes, "Id", "Id", reseña.RestauranteId);
+            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Nombre", reseña.ClienteId);
+            ViewData["RestauranteId"] = new SelectList(_context.Restaurantes, "Id", "Nombre", reseña.RestauranteId);
             return View(reseña);
         }
 
@@ -82,8 +99,8 @@ namespace obligatorio2024.Controllers
             {
                 return NotFound();
             }
-            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Id", reseña.ClienteId);
-            ViewData["RestauranteId"] = new SelectList(_context.Restaurantes, "Id", "Id", reseña.RestauranteId);
+            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Nombre", reseña.ClienteId);
+            ViewData["RestauranteId"] = new SelectList(_context.Restaurantes, "Id", "Nombre", reseña.RestauranteId);
             return View(reseña);
         }
 
@@ -117,8 +134,8 @@ namespace obligatorio2024.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Id", reseña.ClienteId);
-            ViewData["RestauranteId"] = new SelectList(_context.Restaurantes, "Id", "Id", reseña.RestauranteId);
+            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Nombre", reseña.ClienteId);
+            ViewData["RestauranteId"] = new SelectList(_context.Restaurantes, "Id", "Nombre", reseña.RestauranteId);
             return View(reseña);
         }
 
@@ -160,29 +177,6 @@ namespace obligatorio2024.Controllers
         private bool ReseñaExists(int id)
         {
             return _context.Reseñas.Any(e => e.Id == id);
-        }
-
-        // Nueva acción para mostrar el formulario de búsqueda y las reseñas
-        public async Task<IActionResult> BuscarReseñas(int? id)
-        {
-            ViewData["RestauranteId"] = new SelectList(_context.Restaurantes, "Id", "Dirección");
-
-            if (id == null)
-            {
-                return View();
-            }
-
-            var restaurante = await _context.Restaurantes
-                .Include(r => r.Reseñas)
-                .ThenInclude(r => r.Cliente)
-                .FirstOrDefaultAsync(r => r.Id == id);
-
-            if (restaurante == null)
-            {
-                return NotFound();
-            }
-
-            return View(restaurante.Reseñas);
         }
     }
 }

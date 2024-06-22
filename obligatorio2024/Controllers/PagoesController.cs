@@ -21,11 +21,32 @@ namespace obligatorio2024.Controllers
         }
 
         // GET: Pagoes
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? restauranteId)
         {
-            var obligatorio2024Context = _context.Pagos.Include(p => p.Reserva).ThenInclude(r => r.Cliente);
-            return View(await obligatorio2024Context.ToListAsync());
+            var restaurantes = await _context.Restaurantes.ToListAsync();
+            ViewBag.RestauranteId = new SelectList(restaurantes, "Id", "Dirección", restauranteId ?? 1);
+            ViewBag.SelectedRestauranteId = restauranteId ?? 1;
+
+            var pagos = _context.Pagos
+                .Include(p => p.Reserva)
+                    .ThenInclude(r => r.Cliente)
+                .Include(p => p.Reserva)
+                    .ThenInclude(r => r.Mesa)
+                    .ThenInclude(m => m.Restaurante)
+                .AsQueryable();
+
+            if (restauranteId.HasValue)
+            {
+                pagos = pagos.Where(p => p.Reserva.Mesa.RestauranteId == restauranteId.Value);
+            }
+            else
+            {
+                pagos = pagos.Where(p => p.Reserva.Mesa.RestauranteId == 1);
+            }
+
+            return View(await pagos.ToListAsync());
         }
+
 
         // GET: Pagoes/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -60,7 +81,6 @@ namespace obligatorio2024.Controllers
         {
             if (ModelState.IsValid)
             {
-                // Verificar si la reserva existe
                 var reserva = await _context.Reservas.FindAsync(pago.ReservaId);
                 if (reserva == null)
                 {
@@ -68,7 +88,6 @@ namespace obligatorio2024.Controllers
                     return View(pago);
                 }
 
-                // Verificar si ya existe un pago para la misma reserva
                 var existingPago = await _context.Pagos
                     .FirstOrDefaultAsync(p => p.ReservaId == pago.ReservaId && p.Id != pago.Id);
                 if (existingPago != null)
@@ -109,7 +128,6 @@ namespace obligatorio2024.Controllers
             return View(pago);
         }
 
-
         // POST: Pagoes/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -124,27 +142,22 @@ namespace obligatorio2024.Controllers
             {
                 try
                 {
-                    // Obtener el pago original
                     var pagoOriginal = await _context.Pagos.FindAsync(id);
                     if (pagoOriginal == null)
                     {
                         return NotFound();
                     }
 
-                    // Utilizar CrearPagoAsync para calcular el tipo de cambio
                     var nuevoPago = await _pagoService.CrearPagoAsync(pago.Monto, pago.Moneda, pago.MetodoPago);
 
-                    // Actualizar los valores del objeto original con los valores del objeto editado
-                    pagoOriginal.Monto = nuevoPago.Monto;  // Monto convertido
+                    pagoOriginal.Monto = nuevoPago.Monto;
                     pagoOriginal.MetodoPago = pago.MetodoPago;
                     pagoOriginal.Moneda = pago.Moneda;
                     pagoOriginal.TipoCambio = nuevoPago.TipoCambio;
 
-                    // Mantener el ReservaId y la FechaPago originales
                     pagoOriginal.ReservaId = pagoOriginal.ReservaId;
                     pagoOriginal.FechaPago = pagoOriginal.FechaPago;
 
-                    // Obtener la reserva y el cliente asociado para aplicar el descuento
                     var reserva = await _context.Reservas
                         .Include(r => r.Cliente)
                         .FirstOrDefaultAsync(r => r.Id == pagoOriginal.ReservaId);
@@ -172,11 +185,6 @@ namespace obligatorio2024.Controllers
             }
             return View(pago);
         }
-
-
-
-
-
 
         // GET: Pagoes/Delete/5
         public async Task<IActionResult> Delete(int? id)
@@ -223,16 +231,12 @@ namespace obligatorio2024.Controllers
             switch (tipoCliente)
             {
                 case "Frecuente":
-                    return monto * 0.90m; // 10% de descuento
+                    return monto * 0.90m;
                 case "VIP":
-                    return monto * 0.80m; // 20% de descuento
+                    return monto * 0.80m;
                 default:
-                    return monto; // Sin descuento para nuevos clientes
+                    return monto;
             }
         }
     }
 }
-
-
-
-

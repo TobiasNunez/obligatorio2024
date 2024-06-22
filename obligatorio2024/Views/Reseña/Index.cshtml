@@ -2,32 +2,42 @@
 
 @{
     ViewData["Title"] = "Index";
+    var selectedRestauranteId = ViewBag.SelectedRestauranteId as int?;
 }
 
-<h1>Index</h1>
+<h1>Reseñas</h1>
+
+<form method="get">
+    <div class="form-group">
+        <label for="RestauranteId">Restaurante</label>
+        <select id="RestauranteId" name="restauranteId" class="form-control" onchange="this.form.submit()">
+            @foreach (var item in (SelectList)ViewBag.RestauranteId)
+            {
+                @if (item.Value == selectedRestauranteId.ToString())
+                {
+                    <option value="@item.Value" selected>@item.Text</option>
+                }
+                else
+                {
+                    <option value="@item.Value">@item.Text</option>
+                }
+            }
+        </select>
+    </div>
+</form>
 
 <p>
-    <a asp-action="Create">Create New</a>
-    <a asp-action="BuscarReseñas" class="btn btn-primary">Buscar Reseñas por Restaurante</a>
+    <a asp-action="Create" class="btn btn-primary">Crear Nueva Reseña</a>
 </p>
+
 <table class="table">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Puntaje)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Comentario)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FechaReseña)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Cliente)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Restaurante)
-            </th>
+            <th>@Html.DisplayNameFor(model => model.Puntaje)</th>
+            <th>@Html.DisplayNameFor(model => model.Comentario)</th>
+            <th>@Html.DisplayNameFor(model => model.FechaReseña)</th>
+            <th>@Html.DisplayNameFor(model => model.Cliente.Nombre)</th>
+            <th>@Html.DisplayNameFor(model => model.Restaurante.Nombre)</th>
             <th></th>
         </tr>
     </thead>
@@ -35,25 +45,15 @@
         @foreach (var item in Model)
         {
             <tr>
+                <td>@Html.DisplayFor(modelItem => item.Puntaje)</td>
+                <td>@Html.DisplayFor(modelItem => item.Comentario)</td>
+                <td>@Html.DisplayFor(modelItem => item.FechaReseña)</td>
+                <td>@Html.DisplayFor(modelItem => item.Cliente.Nombre)</td>
+                <td>@Html.DisplayFor(modelItem => item.Restaurante.Nombre)</td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Puntaje)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Comentario)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.FechaReseña)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Cliente.Nombre)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Restaurante.Nombre)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary">Editar</a>
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info">Detalles</a>
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Eliminar</a>
                 </td>
             </tr>
         }
