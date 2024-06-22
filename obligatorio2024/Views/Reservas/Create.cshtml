@@ -13,8 +13,8 @@
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label for="telefonoCliente" class="control-label">Número de Teléfono del Cliente</label>
-                <input type="text" name="telefonoCliente" class="form-control" />
+                <label for="emailCliente" class="control-label">Email del Cliente</label>
+                <input type="text" name="emailCliente" class="form-control" />
                 @if (ViewBag.ErrorMessage != null)
                 {
                     <span class="text-danger">@ViewBag.ErrorMessage</span>
