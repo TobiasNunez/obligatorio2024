@@ -53,7 +53,7 @@ namespace obligatorio2024.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nombre,Dirección,Teléfono")] Restaurante restaurante)
+        public async Task<IActionResult> Create([Bind("Id,Nombre,Dirección,Teléfono,Ciudad")] Restaurante restaurante)
         {
             if (ModelState.IsValid)
             {
@@ -85,7 +85,7 @@ namespace obligatorio2024.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Nombre,Dirección,Teléfono")] Restaurante restaurante)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Nombre,Dirección,Teléfono,Ciudad")] Restaurante restaurante)
         {
             if (id != restaurante.Id)
             {
@@ -152,7 +152,5 @@ namespace obligatorio2024.Controllers
         {
             return _context.Restaurantes.Any(e => e.Id == id);
         }
-        
-
     }
 }

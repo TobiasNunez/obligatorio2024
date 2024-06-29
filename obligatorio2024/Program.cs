@@ -20,6 +20,8 @@ builder.Services.AddSession(options =>
 // Registro de servicios
 builder.Services.AddScoped<CurrencyService>();
 builder.Services.AddScoped<PagoService>();
+builder.Services.AddHttpClient<WeatherService>();
+// Añadir el WeatherService
 
 var app = builder.Build();
 

@@ -1,21 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using obligatorio2024.Models;
+using obligatorio2024.Service;
 
 namespace obligatorio2024.Controllers
 {
     public class ReservasController : Controller
     {
         private readonly Obligatorio2024Context _context;
+        private readonly WeatherService _weatherService;
 
-        public ReservasController(Obligatorio2024Context context)
+        public ReservasController(Obligatorio2024Context context, WeatherService weatherService)
         {
             _context = context;
+            _weatherService = weatherService;
         }
 
         // GET: Reservas
@@ -116,6 +118,16 @@ namespace obligatorio2024.Controllers
                 {
                     mesa.Estado = "Reservada";
                     _context.Update(mesa);
+                }
+
+                // Guardar la reserva para obtener su ID
+                await _context.SaveChangesAsync();
+
+                // Llamar a la API del clima y crear la entrada de clima
+                var restaurante = await _context.Restaurantes.FirstOrDefaultAsync(r => r.Id == mesa.RestauranteId);
+                if (restaurante != null)
+                {
+                    await CreateClimaEntryAsync(reserva.FechaReserva, reserva.Id, restaurante.Ciudad);
                 }
 
                 await _context.SaveChangesAsync();
@@ -257,6 +269,22 @@ namespace obligatorio2024.Controllers
         private bool ReservaExists(int id)
         {
             return _context.Reservas.Any(e => e.Id == id);
+        }
+
+        private async Task CreateClimaEntryAsync(DateTime fechaReserva, int reservaId, string ciudad)
+        {
+            var weather = await _weatherService.GetWeatherAsync(ciudad);
+
+            var clima = new Clima
+            {
+                Fecha = fechaReserva,
+                Temperatura = (decimal)weather.Main.Temp.Value, // Conversión explícita de double a decimal
+                DescripciónClima = weather.Weather.First().Description,
+                ReservaId = reservaId
+            };
+
+            _context.Climas.Add(clima);
+            await _context.SaveChangesAsync();
         }
     }
 }

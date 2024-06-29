@@ -13,6 +13,8 @@ public partial class Restaurante
 
     public string Teléfono { get; set; } = null!;
 
+    public string Ciudad { get; set; } = null!;
+
     public virtual ICollection<Mesa> Mesas { get; set; } = new List<Mesa>();
 
     public virtual ICollection<Reseña> Reseñas { get; set; } = new List<Reseña>();
