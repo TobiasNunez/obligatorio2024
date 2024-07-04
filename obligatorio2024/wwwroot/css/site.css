@@ -389,3 +389,153 @@ img {
     height: 20px;
     margin-right: 5px;
 }
+
+.mx-auto {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.px-4 {
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.md\:px-6 {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+}
+
+.max-w-2xl {
+    max-width: 42rem;
+}
+
+.grid {
+    display: grid;
+    gap: 1rem;
+}
+
+.gap-12 {
+    gap: 3rem;
+}
+
+.gap-8 {
+    gap: 2rem;
+}
+
+.flex {
+    display: flex;
+}
+
+.gap-4 {
+    gap: 1rem;
+}
+
+.items-start {
+    align-items: flex-start;
+}
+
+.text-sm {
+    font-size: 0.875rem;
+}
+
+.font-semibold {
+    font-weight: 600;
+}
+
+.fill-primary {
+    fill: #3490dc; /* Cambia esto al color que prefieras */
+}
+
+.fill-muted {
+    fill: #d1d5db; /* Cambia esto al color que prefieras */
+}
+
+.stroke-muted-foreground {
+    stroke: #6b7280; /* Cambia esto al color que prefieras */
+}
+
+.leading-loose {
+    line-height: 1.75;
+}
+
+.text-muted-foreground {
+    color: #6b7280; /* Cambia esto al color que prefieras */
+}
+
+.separator {
+    border: 0;
+    height: 1px;
+    background: #d1d5db; /* Cambia esto al color que prefieras */
+}
+
+.control-label {
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+}
+
+.btn {
+    display: inline-block;
+    font-weight: 400;
+    color: #212529;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    background-color: transparent;
+    border: 1px solid transparent;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    border-radius: 0.25rem;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+    .btn-primary:hover {
+        color: #fff;
+        background-color: #0069d9;
+        border-color: #0062cc;
+    }
+
+.star-icon {
+    width: 24px; /* Asegúrate de que las estrellas tengan suficiente tamaño */
+    height: 24px; /* Asegúrate de que las estrellas tengan suficiente tamaño */
+}
+
+.comment-text {
+    font-size: 0.875rem; /* Tamaño de la fuente del comentario */
+}
+
+.review-container {
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.review-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.review-rating {
+    display: flex;
+    gap: 0.25rem;
+}

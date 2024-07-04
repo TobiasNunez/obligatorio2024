@@ -1,51 +1,68 @@
 ﻿@model obligatorio2024.Models.Reseña
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Crear Reseña";
 }
 
-<h1>Create</h1>
+<h1>Crear Reseña</h1>
 
-<h4>Reseña</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
+<div class="mx-auto px-4 md:px-6 max-w-2xl grid gap-12">
+    <div class="grid gap-8">
+        <!-- Ejemplo de Reseña -->
+        <div class="review-container">
+            <div class="review-header">
+                <div class="font-semibold">Sarah Johnson</div>
+                <div class="review-rating">
+                    <svg class="star-icon fill-primary">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                    </svg>
+                    <svg class="star-icon fill-primary">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                    </svg>
+                    <svg class="star-icon fill-primary">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                    </svg>
+                    <svg class="star-icon fill-muted stroke-muted-foreground">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                    </svg>
+                    <svg class="star-icon fill-muted stroke-muted-foreground">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                    </svg>
+                </div>
+            </div>
+            <div class="comment-text">
+                I've been experimenting with their food for a few weeks now, and it's been a great addition to my dining
+                experiences. The menu offers a nice variety of options, and the quality of the dishes is consistently
+                high.
+            </div>
+        </div>
+        <!-- Repetir el bloque anterior para más reseñas -->
+    </div>
+    <div class="grid gap-6">
         <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="ClienteId" class="control-label"></label>
-                <select asp-for="ClienteId" class ="form-control" asp-items="ViewBag.ClienteId"></select>
+            <div class="grid gap-2">
+                <label class="control-label" asp-for="ClienteId">Cliente</label>
+                <select class="form-control" asp-for="ClienteId" asp-items="ViewBag.ClienteId"></select>
             </div>
-            <div class="form-group">
-                <label asp-for="RestauranteId" class="control-label"></label>
-                <select asp-for="RestauranteId" class ="form-control" asp-items="ViewBag.RestauranteId"></select>
+            <div class="grid gap-2">
+                <label class="control-label" asp-for="RestauranteId">Restaurante</label>
+                <select class="form-control" asp-for="RestauranteId" asp-items="ViewBag.RestauranteId"></select>
             </div>
-            <div class="form-group">
-                <label asp-for="Puntaje" class="control-label"></label>
-                <input asp-for="Puntaje" class="form-control" />
-                <span asp-validation-for="Puntaje" class="text-danger"></span>
+            <div class="grid gap-2">
+                <label class="control-label" asp-for="Puntaje">Puntaje</label>
+                <select class="form-control" asp-for="Puntaje">
+                    <option value="1">1 estrella</option>
+                    <option value="2">2 estrellas</option>
+                    <option value="3">3 estrellas</option>
+                    <option value="4">4 estrellas</option>
+                    <option value="5">5 estrellas</option>
+                </select>
             </div>
-            <div class="form-group">
-                <label asp-for="Comentario" class="control-label"></label>
-                <input asp-for="Comentario" class="form-control" />
-                <span asp-validation-for="Comentario" class="text-danger"></span>
+            <div class="grid gap-2">
+                <label class="control-label" asp-for="Comentario">Comentario</label>
+                <textarea class="form-control" asp-for="Comentario" placeholder="Escribe tu reseña"></textarea>
             </div>
-            <div class="form-group">
-                <label asp-for="FechaReseña" class="control-label"></label>
-                <input asp-for="FechaReseña" class="form-control" />
-                <span asp-validation-for="FechaReseña" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
+            <button type="submit" class="btn btn-primary">Enviar Reseña</button>
         </form>
     </div>
 </div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}

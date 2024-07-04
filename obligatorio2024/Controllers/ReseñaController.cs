@@ -61,7 +61,6 @@ namespace obligatorio2024.Controllers
 
             return View(reseña);
         }
-
         // GET: Reseña/Create
         public IActionResult Create()
         {
@@ -77,6 +76,7 @@ namespace obligatorio2024.Controllers
         {
             if (ModelState.IsValid)
             {
+                reseña.FechaReseña = DateTime.Now;
                 _context.Add(reseña);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
