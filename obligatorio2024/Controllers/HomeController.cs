@@ -1,11 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using obligatorio2024.Models;
+using obligatorio2024.Service;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using System.IO;
 
 namespace obligatorio2024.Controllers
 {
@@ -13,17 +12,26 @@ namespace obligatorio2024.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly Obligatorio2024Context _context;
+        private readonly WeatherService _weatherService;
 
-        public HomeController(ILogger<HomeController> logger, Obligatorio2024Context context)
+        public HomeController(ILogger<HomeController> logger, Obligatorio2024Context context, WeatherService weatherService)
         {
             _logger = logger;
             _context = context;
+            _weatherService = weatherService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             var menuItems = _context.Menus.ToList();
-            return View(menuItems);
+
+            // Obtener datos del clima
+            var weatherData = await _weatherService.GetWeatherAsync("Punta del Este");
+
+            ViewBag.MenuItems = menuItems;
+            ViewBag.WeatherData = weatherData;
+
+            return View();
         }
 
         public IActionResult Privacy()

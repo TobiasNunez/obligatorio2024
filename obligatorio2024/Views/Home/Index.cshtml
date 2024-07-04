@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Home";
+    var weatherData = ViewBag.WeatherData as obligatorio2024.Models.Welcome;
 }
 
 <section class="hero d-flex align-items-center">
@@ -15,6 +16,18 @@
                     <img src="~/images/mal-tiempo2.png" class="img-fluid rounded" alt="About Us">
                 </h1>
                 <p>Vive una experiencia inolvidable. Ofrecemos una amplia variedad de platillos elaborados con los mejores ingredientes frescos.</p>
+                <div class="weather-info">
+                    <h3>Clima en Punta del Este</h3>
+                    @if (weatherData != null)
+                    {
+                        <p>Temperatura: @weatherData.Main.Temp °C</p>
+                        <p>Condición: @weatherData.Weather[0].Description</p>
+                    }
+                    else
+                    {
+                        <p>No se pudieron obtener los datos del clima.</p>
+                    }
+                </div>
             </div>
         </div>
     </div>
@@ -41,6 +54,7 @@
             </div>
         </section>
 </section>
+
 <section class="about-us">
     <div class="image-container">
         <div class="row">
@@ -76,7 +90,3 @@
         </form>
     </div>
 </section>
-
-
-
-}

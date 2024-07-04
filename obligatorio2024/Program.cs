@@ -21,7 +21,6 @@ builder.Services.AddSession(options =>
 builder.Services.AddScoped<CurrencyService>();
 builder.Services.AddScoped<PagoService>();
 builder.Services.AddHttpClient<WeatherService>();
-// Añadir el WeatherService
 
 var app = builder.Build();
 
@@ -62,3 +61,4 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
+    

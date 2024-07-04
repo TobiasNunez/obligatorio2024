@@ -539,3 +539,12 @@ img {
     display: flex;
     gap: 0.25rem;
 }
+
+
+¿.weather-info {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border-radius: 5px;
+}
+
