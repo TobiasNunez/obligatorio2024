@@ -539,12 +539,43 @@ img {
     display: flex;
     gap: 0.25rem;
 }
-
-
-¿.weather-info {
+.weather-info {
     margin-top: 20px;
-    padding: 10px;
-    background-color: #f0f0f0;
+    padding: 10px 20px; /* Ajuste de padding para reducir el tamaño del cuadro */
+    background-color: rgba(128, 0, 0, 0.7); /* Rojo medio transparente */
     border-radius: 5px;
+    color: #FFF; /* Color del texto en blanco */
+    display: inline-block; /* Asegura que el tamaño se ajuste al contenido */
+    animation: fade-in 1s ease-out;
+    position: relative;
+    left: 20%; /* Mover más hacia la derecha */
 }
 
+.weather-widget {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+    .weather-widget .location {
+        font-size: 1.2em;
+        font-weight: bold;
+    }
+
+    .weather-widget .temperature {
+        font-size: 1.5em;
+        font-weight: bold;
+    }
+
+/* Añadir animación de aparición */
+@keyframes fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

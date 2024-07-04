@@ -11,17 +11,18 @@
             <div class="col-md-6">
                 <img src="~/images/ia-despegada.webp" class="img-fluid rounded" alt="About Us">
             </div>
-            <div class="col-md-6">
+            <div class="col-md-6 text-center">
                 <h1>
                     <img src="~/images/mal-tiempo2.png" class="img-fluid rounded" alt="About Us">
                 </h1>
                 <p>Vive una experiencia inolvidable. Ofrecemos una amplia variedad de platillos elaborados con los mejores ingredientes frescos.</p>
                 <div class="weather-info">
-                    <h3>Clima en Punta del Este</h3>
                     @if (weatherData != null)
                     {
-                        <p>Temperatura: @weatherData.Main.Temp °C</p>
-                        <p>Condición: @weatherData.Weather[0].Description</p>
+                        <div class="weather-widget">
+                            <span class="location">Punta del Este</span>
+                            <span class="temperature">@weatherData.Main.Temp °C</span>
+                        </div>
                     }
                     else
                     {
