@@ -3,7 +3,6 @@
 @{
     ViewData["Title"] = "Home";
     var weatherData = ViewBag.WeatherData as obligatorio2024.Models.Welcome;
-    var claims = User.Claims.Select(c => new { c.Type, c.Value }).ToList();
 }
 
 <section class="hero d-flex align-items-center">
@@ -20,9 +19,12 @@
                 <div class="weather-info">
                     @if (weatherData != null)
                     {
-                        <div class="weather-widget">
-                            <span class="location">Punta del Este</span>
-                            <span class="temperature">@weatherData.Main.Temp °C</span>
+                        <div id="weatherContainer">
+                            <img src="https://cdn-icons-png.flaticon.com/512/3209/3209665.png" alt="Weather Icon" id="weatherIcon" style="cursor: pointer; width: 48px; height: 48px;">
+                            <div class="weather-widget" id="weatherWidget" style="display: none;">
+                                <span class="location">Punta del Este</span>
+                                <span class="temperature">@weatherData.Main.Temp °C</span>
+                            </div>
                         </div>
                     }
                     else
@@ -92,3 +94,21 @@
         </form>
     </div>
 </section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+        const weatherIcon = document.getElementById('weatherIcon');
+        const weatherWidget = document.getElementById('weatherWidget');
+
+        weatherIcon.addEventListener('click', () => {
+            if (weatherWidget.style.display === 'none') {
+                weatherWidget.style.display = 'block';
+            } else {
+                weatherWidget.style.display = 'none';
+            }
+        });
+    });
+</script>
+
+
+

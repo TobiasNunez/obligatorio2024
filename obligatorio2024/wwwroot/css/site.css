@@ -1,20 +1,20 @@
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 
@@ -36,6 +36,7 @@ body {
     padding-left: 10px;
     border-left: 1px solid #ccc;
 }
+
     .submenu-categories .nav-link {
         font-size: 0.9em;
         padding-left: 20px;
@@ -108,8 +109,9 @@ body {
 
 .navbar {
     flex-shrink: 0;
-     animation: slide-in 1s ease-out;
+    animation: slide-in 1s ease-out;
 }
+
 .login-button {
     padding: 5px 15px; /* Ajusta el padding según sea necesario */
     border: 1px solid #FFFF; /* Borde de 1 píxel sólido y blanco */
@@ -162,6 +164,7 @@ body {
     padding: 30px;
     border-bottom: 1.5px solid white;
 }
+
 .sidebar {
     position: fixed;
     top: 0;
@@ -234,7 +237,7 @@ img {
     user-select: none;
 }
 
-.container-slider{
+.container-slider {
     padding: 2rem;
 }
 
@@ -311,9 +314,10 @@ img {
     .hero p {
         font-size: 1.25rem;
         color: #FFFF;
-        text-align:center;
+        text-align: center;
         animation: slide-in-right 1s ease-out;
     }
+
 .image-container {
     width: 100%; /* Ancho del contenedor */
     height: 300px; /* Altura del contenedor, ajústala según tus necesidades */
@@ -337,20 +341,20 @@ img {
         color: #AB9746;
     }
 
-    .hero img {
-        width: 100%;
-        height: 70%;
-        object-fit: cover; /* Ajusta la imagen para cubrir el contenedor sin deformarse */
-        object-position: center;
-        max-width: 500px;
-        border-radius: 10px;
-        animation: slide-in-right 1s ease-out;
-    }
+.hero img {
+    width: 100%;
+    height: 70%;
+    object-fit: cover; /* Ajusta la imagen para cubrir el contenedor sin deformarse */
+    object-position: center;
+    max-width: 500px;
+    border-radius: 10px;
+    animation: slide-in-right 1s ease-out;
+}
 
 .hero .login-btn {
-        position: absolute;
-        top: 1rem;
-        right: 1rem;
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
 }
 
 
@@ -380,6 +384,7 @@ img {
     background-color: #752929;
     border-radius: 0px 0px 8px 8px;
 }
+
 .card-title, .card-text, .font-weight-bold {
     color: white;
 }
@@ -539,33 +544,55 @@ img {
     display: flex;
     gap: 0.25rem;
 }
+
 .weather-info {
-    margin-top: 20px;
-    padding: 10px 20px; /* Ajuste de padding para reducir el tamaño del cuadro */
-    background-color: rgba(128, 0, 0, 0.7); /* Rojo medio transparente */
-    border-radius: 5px;
-    color: #FFF; /* Color del texto en blanco */
-    display: inline-block; /* Asegura que el tamaño se ajuste al contenido */
-    animation: fade-in 1s ease-out;
-    position: relative;
-    left: 20%; /* Mover más hacia la derecha */
+    display: flex;
+    justify-content: center; /* Centra el contenido horizontalmente */
+}
+
+#weatherIcon {
+    cursor: pointer;
+    width: 48px;
+    height: 48px;
 }
 
 .weather-widget {
-    display: flex;
+    display: none; /* Oculto por defecto */
     align-items: center;
     gap: 10px;
+    background-color: #500B0B; /* Fondo rojo suave */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    animation: fade-in 1s ease-out;
+    position: absolute; /* Cambiar a absolute para posicionamiento */
+    bottom: -10px; /* Ajusta según sea necesario */
+    left: 50%; /* Centrar horizontalmente */
+    z-index: 1000; /* Asegurar que esté sobre otros elementos */
+    white-space: nowrap; /* Evitar que el texto se corte */
 }
 
-    .weather-widget .location {
-        font-size: 1.2em;
-        font-weight: bold;
-    }
+.weather-info {
+    color: #FFF; /* Color del texto en blanco para contraste */
+}
 
-    .weather-widget .temperature {
-        font-size: 1.5em;
-        font-weight: bold;
-    }
+.weather-widget .location {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #FFD700; /* Color amarillo dorado */
+}
+
+.weather-widget .temperature {
+    font-size: 2em;
+    font-weight: bold;
+    color: #FFFFFF; /* Color blanco */
+}
+
+.weather-widget .description {
+    font-size: 1.2em;
+    font-style: italic;
+    color: #FFA500; /* Color naranja */
+}
 
 /* Añadir animación de aparición */
 @keyframes fade-in {
