@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +10,7 @@ using obligatorio2024.Models;
 
 namespace obligatorio2024.Controllers
 {
+    [Authorize(Policy = "VerRolesPermiso")]
     public class RolesController : Controller
     {
         private readonly Obligatorio2024Context _context;
@@ -43,29 +45,57 @@ namespace obligatorio2024.Controllers
         }
 
         // GET: Roles/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
 
+        // GET: Roles/Create
+        [HttpGet]
+        public async Task<IActionResult> Create()
+        {
+            // Obtener la lista de permisos
+            var permisos = await _context.Permisos.ToListAsync();
+            ViewBag.Permisos = permisos;
+
+            return View(new Role());
+        }
         // POST: Roles/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nombre")] Role role)
+        public async Task<IActionResult> Create([Bind("Id,Nombre")] Role role, int[] PermisosSeleccionados)
         {
             if (ModelState.IsValid)
             {
+                // Añadir el rol a la base de datos
                 _context.Add(role);
                 await _context.SaveChangesAsync();
+
+                // Asignar permisos al rol
+                if (PermisosSeleccionados != null && PermisosSeleccionados.Any())
+                {
+                    foreach (var permisoId in PermisosSeleccionados)
+                    {
+                        var rolPermiso = new RolPermiso
+                        {
+                            IdRol = role.Id,
+                            IdPermisos = permisoId
+                        };
+                        _context.Add(rolPermiso);
+                    }
+                    await _context.SaveChangesAsync();
+                }
+
                 return RedirectToAction(nameof(Index));
             }
+
+            // Obtener la lista de permisos nuevamente en caso de error
+            var permisos = await _context.Permisos.ToListAsync();
+            ViewBag.Permisos = permisos;
             return View(role);
         }
 
-        // GET: Roles/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+
+
+
+    // GET: Roles/Edit/5
+    public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
             {

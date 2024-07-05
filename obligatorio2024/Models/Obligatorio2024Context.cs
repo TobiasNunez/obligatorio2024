@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using obligatorio2024.Models;
 
 namespace obligatorio2024.Models;
 
@@ -16,34 +17,23 @@ public partial class Obligatorio2024Context : DbContext
     }
 
     public virtual DbSet<Cliente> Clientes { get; set; }
-
     public virtual DbSet<Clima> Climas { get; set; }
-
     public virtual DbSet<Menu> Menus { get; set; }
-
     public virtual DbSet<Mesa> Mesas { get; set; }
-
     public virtual DbSet<OrdenDetalle> OrdenDetalles { get; set; }
-
     public virtual DbSet<Ordene> Ordenes { get; set; }
-
     public virtual DbSet<Pago> Pagos { get; set; }
-
+    public virtual DbSet<Permiso> Permisos { get; set; }
     public virtual DbSet<Reserva> Reservas { get; set; }
-
     public virtual DbSet<Reseña> Reseñas { get; set; }
-
     public virtual DbSet<Restaurante> Restaurantes { get; set; }
-
     public virtual DbSet<Role> Roles { get; set; }
-
-    public virtual DbSet<RolesPermiso> RolesPermisos { get; set; }
-
     public virtual DbSet<Usuario> Usuarios { get; set; }
+    public virtual DbSet<RolPermiso> RolPermiso { get; set; }
 
-//    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-//        => optionsBuilder.UseSqlServer("Data Source=GOHANSSJ2; Initial Catalog=obligatorio2024; Integrated Security=true; TrustServerCertificate=True");
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?Linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Data Source=GOHANSSJ2; Initial Catalog=obligatorio2024; Integrated Security=true; TrustServerCertificate=True");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -167,7 +157,7 @@ public partial class Obligatorio2024Context : DbContext
 
         modelBuilder.Entity<Pago>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Pagos__3214EC27B323BD92");
+            entity.HasKey(e => e.Id).HasName("PK__Pagos__3214EC2738E94360");
 
             entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.FechaPago).HasColumnType("datetime");
@@ -181,8 +171,10 @@ public partial class Obligatorio2024Context : DbContext
             entity.Property(e => e.ReservaId).HasColumnName("ReservaID");
             entity.Property(e => e.TipoCambio).HasColumnType("decimal(10, 4)");
 
-            entity.HasOne(d => d.Reserva).WithMany(p => p.Pagos)
+            entity.HasOne(d => d.Reserva)
+                .WithMany(p => p.Pagos)
                 .HasForeignKey(d => d.ReservaId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Pagos_Reservas");
         });
 
@@ -237,6 +229,9 @@ public partial class Obligatorio2024Context : DbContext
             entity.HasKey(e => e.Id).HasName("PK__Restaura__3214EC2787A97561");
 
             entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.Ciudad)
+                .HasMaxLength(100)
+                .IsUnicode(false);
             entity.Property(e => e.Dirección)
                 .HasMaxLength(255)
                 .IsUnicode(false);
@@ -248,6 +243,30 @@ public partial class Obligatorio2024Context : DbContext
                 .IsUnicode(false);
         });
 
+        modelBuilder.Entity<RolPermiso>(entity =>
+        {
+            entity.HasKey(e => new { e.IdRol, e.IdPermisos }).HasName("PK_RolPermiso");
+
+            entity.ToTable("RolPermiso"); // Asegúrate de que el nombre sea "RolPermiso"
+
+            entity.Property(e => e.IdRol).HasColumnName("idRol");
+            entity.Property(e => e.IdPermisos).HasColumnName("idPermisos");
+
+            entity.HasOne(d => d.Rol)
+                .WithMany(p => p.RolesPermisos)
+                .HasForeignKey(d => d.IdRol)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_RolPermiso_Rol");
+
+            entity.HasOne(d => d.Permiso)
+                .WithMany(p => p.RolesPermisos)
+                .HasForeignKey(d => d.IdPermisos)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_RolPermiso_Permiso");
+        });
+
+
+
         modelBuilder.Entity<Role>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Roles__3214EC2792EFD105");
@@ -256,22 +275,33 @@ public partial class Obligatorio2024Context : DbContext
             entity.Property(e => e.Nombre)
                 .HasMaxLength(50)
                 .IsUnicode(false);
+
+            entity.HasMany(d => d.RolesPermisos)
+                .WithOne(p => p.Rol)
+                .HasForeignKey(p => p.IdRol)
+                .HasConstraintName("FK_RolPermiso_Rol");
         });
 
-        modelBuilder.Entity<RolesPermiso>(entity =>
+        modelBuilder.Entity<Permiso>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__RolesPer__3214EC277425FBF0");
+            entity.HasKey(e => e.Id).HasName("PK__Permisos__3213E83F01B6833F");
 
-            entity.Property(e => e.Id).HasColumnName("ID");
-            entity.Property(e => e.Permiso)
+            entity.HasIndex(e => e.NombrePermiso, "UQ__Permisos__4FC6D0ACA966DCA5").IsUnique();
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Descripcion)
                 .HasMaxLength(255)
-                .IsUnicode(false);
-            entity.Property(e => e.RolId).HasColumnName("RolID");
+                .IsUnicode(false)
+                .HasColumnName("descripcion");
+            entity.Property(e => e.NombrePermiso)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("nombre_permiso");
 
-            entity.HasOne(d => d.Rol).WithMany(p => p.RolesPermisos)
-                .HasForeignKey(d => d.RolId)
-                .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("FK_RolesPermisos_Roles");
+            entity.HasMany(d => d.RolesPermisos)
+                .WithOne(p => p.Permiso)
+                .HasForeignKey(p => p.IdPermisos)
+                .HasConstraintName("FK_RolPermiso_Permiso");
         });
 
         modelBuilder.Entity<Usuario>(entity =>

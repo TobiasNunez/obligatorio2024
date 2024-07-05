@@ -9,23 +9,23 @@ using obligatorio2024.Models;
 
 namespace obligatorio2024.Controllers
 {
-    public class RolesPermisoesController : Controller
+    public class RolPermisoesController : Controller
     {
         private readonly Obligatorio2024Context _context;
 
-        public RolesPermisoesController(Obligatorio2024Context context)
+        public RolPermisoesController(Obligatorio2024Context context)
         {
             _context = context;
         }
 
-        // GET: RolesPermisoes
+        // GET: RolPermisoes
         public async Task<IActionResult> Index()
         {
-            var obligatorio2024Context = _context.RolesPermisos.Include(r => r.Rol);
+            var obligatorio2024Context = _context.RolPermiso.Include(r => r.Permiso).Include(r => r.Rol);
             return View(await obligatorio2024Context.ToListAsync());
         }
 
-        // GET: RolesPermisoes/Details/5
+        // GET: RolPermisoes/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -33,42 +33,45 @@ namespace obligatorio2024.Controllers
                 return NotFound();
             }
 
-            var rolesPermiso = await _context.RolesPermisos
+            var rolPermiso = await _context.RolPermiso
+                .Include(r => r.Permiso)
                 .Include(r => r.Rol)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (rolesPermiso == null)
+                .FirstOrDefaultAsync(m => m.IdRol == id);
+            if (rolPermiso == null)
             {
                 return NotFound();
             }
 
-            return View(rolesPermiso);
+            return View(rolPermiso);
         }
 
-        // GET: RolesPermisoes/Create
+        // GET: RolPermisoes/Create
         public IActionResult Create()
         {
-            ViewData["RolId"] = new SelectList(_context.Roles, "Id", "Id");
+            ViewData["IdPermisos"] = new SelectList(_context.Permisos, "Id", "Id");
+            ViewData["IdRol"] = new SelectList(_context.Roles, "Id", "Id");
             return View();
         }
 
-        // POST: RolesPermisoes/Create
+        // POST: RolPermisoes/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,RolId,Permiso")] RolesPermiso rolesPermiso)
+        public async Task<IActionResult> Create([Bind("IdRol,IdPermisos")] RolPermiso rolPermiso)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(rolesPermiso);
+                _context.Add(rolPermiso);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["RolId"] = new SelectList(_context.Roles, "Id", "Id", rolesPermiso.RolId);
-            return View(rolesPermiso);
+            ViewData["IdPermisos"] = new SelectList(_context.Permisos, "Id", "Id", rolPermiso.IdPermisos);
+            ViewData["IdRol"] = new SelectList(_context.Roles, "Id", "Id", rolPermiso.IdRol);
+            return View(rolPermiso);
         }
 
-        // GET: RolesPermisoes/Edit/5
+        // GET: RolPermisoes/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -76,23 +79,24 @@ namespace obligatorio2024.Controllers
                 return NotFound();
             }
 
-            var rolesPermiso = await _context.RolesPermisos.FindAsync(id);
-            if (rolesPermiso == null)
+            var rolPermiso = await _context.RolPermiso.FindAsync(id);
+            if (rolPermiso == null)
             {
                 return NotFound();
             }
-            ViewData["RolId"] = new SelectList(_context.Roles, "Id", "Id", rolesPermiso.RolId);
-            return View(rolesPermiso);
+            ViewData["IdPermisos"] = new SelectList(_context.Permisos, "Id", "Id", rolPermiso.IdPermisos);
+            ViewData["IdRol"] = new SelectList(_context.Roles, "Id", "Id", rolPermiso.IdRol);
+            return View(rolPermiso);
         }
 
-        // POST: RolesPermisoes/Edit/5
+        // POST: RolPermisoes/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,RolId,Permiso")] RolesPermiso rolesPermiso)
+        public async Task<IActionResult> Edit(int id, [Bind("IdRol,IdPermisos")] RolPermiso rolPermiso)
         {
-            if (id != rolesPermiso.Id)
+            if (id != rolPermiso.IdRol)
             {
                 return NotFound();
             }
@@ -101,12 +105,12 @@ namespace obligatorio2024.Controllers
             {
                 try
                 {
-                    _context.Update(rolesPermiso);
+                    _context.Update(rolPermiso);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!RolesPermisoExists(rolesPermiso.Id))
+                    if (!RolPermisoExists(rolPermiso.IdRol))
                     {
                         return NotFound();
                     }
@@ -117,11 +121,12 @@ namespace obligatorio2024.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["RolId"] = new SelectList(_context.Roles, "Id", "Id", rolesPermiso.RolId);
-            return View(rolesPermiso);
+            ViewData["IdPermisos"] = new SelectList(_context.Permisos, "Id", "Id", rolPermiso.IdPermisos);
+            ViewData["IdRol"] = new SelectList(_context.Roles, "Id", "Id", rolPermiso.IdRol);
+            return View(rolPermiso);
         }
 
-        // GET: RolesPermisoes/Delete/5
+        // GET: RolPermisoes/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -129,35 +134,36 @@ namespace obligatorio2024.Controllers
                 return NotFound();
             }
 
-            var rolesPermiso = await _context.RolesPermisos
+            var rolPermiso = await _context.RolPermiso
+                .Include(r => r.Permiso)
                 .Include(r => r.Rol)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (rolesPermiso == null)
+                .FirstOrDefaultAsync(m => m.IdRol == id);
+            if (rolPermiso == null)
             {
                 return NotFound();
             }
 
-            return View(rolesPermiso);
+            return View(rolPermiso);
         }
 
-        // POST: RolesPermisoes/Delete/5
+        // POST: RolPermisoes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var rolesPermiso = await _context.RolesPermisos.FindAsync(id);
-            if (rolesPermiso != null)
+            var rolPermiso = await _context.RolPermiso.FindAsync(id);
+            if (rolPermiso != null)
             {
-                _context.RolesPermisos.Remove(rolesPermiso);
+                _context.RolPermiso.Remove(rolPermiso);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool RolesPermisoExists(int id)
+        private bool RolPermisoExists(int id)
         {
-            return _context.RolesPermisos.Any(e => e.Id == id);
+            return _context.RolPermiso.Any(e => e.IdRol == id);
         }
     }
 }

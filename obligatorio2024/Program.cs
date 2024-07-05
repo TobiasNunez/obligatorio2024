@@ -2,19 +2,150 @@ using Microsoft.EntityFrameworkCore;
 using obligatorio2024.Models;
 using obligatorio2024.Service;
 using Microsoft.AspNetCore.Session;
-using RestSharp;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<Obligatorio2024Context>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddControllersWithViews(options =>
+{
+    options.Filters.Add(
+        new ResponseCacheAttribute
+        {
+            NoStore = true,
+            Location = ResponseCacheLocation.None,
+        }
+    );
+});
+
+builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
+});
+
+// AUTENTICACIÓN DE USUARIO LOGEADO
+builder.Services.AddScoped<IUsuarioServicio, UsuarioServicio>();
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Inicio/Login";
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
+        options.AccessDeniedPath = "/Home/Index"; // ruta para acceso denegado
+    });
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("VerOrdenesPermiso", policy =>
+    {
+        policy.RequireAssertion(context =>
+        {
+            var permisosClaim = context.User.FindFirst(c => c.Type == "Permisos")?.Value;
+            if (permisosClaim != null)
+            {
+                var permisosUsuario = permisosClaim.Split(',');
+                return permisosUsuario.Any(p => p.Trim().Equals("ver ordenes"));
+            }
+            return false;
+        });
+    });
+    options.AddPolicy("VerRolesPermiso", policy =>
+    {
+        policy.RequireAssertion(context =>
+        {
+            var permisosClaim = context.User.FindFirst(c => c.Type == "Permisos")?.Value;
+            if (permisosClaim != null)
+            {
+                var permisosUsuario = permisosClaim.Split(',');
+                return permisosUsuario.Any(p => p.Trim().Equals("ver roles"));
+            }
+            return false;
+        });
+    });
+    options.AddPolicy("VerPermisosPermiso", policy =>
+    {
+        policy.RequireAssertion(context =>
+        {
+            var permisosClaim = context.User.FindFirst(c => c.Type == "Permisos")?.Value;
+            if (permisosClaim != null)
+            {
+                var permisosUsuario = permisosClaim.Split(',');
+                return permisosUsuario.Any(p => p.Trim().Equals("ver permisos"));
+            }
+            return false;
+        });
+    });
+    options.AddPolicy("VerRestaurantesPermiso", policy =>
+    {
+        policy.RequireAssertion(context =>
+        {
+            var permisosClaim = context.User.FindFirst(c => c.Type == "Permisos")?.Value;
+            if (permisosClaim != null)
+            {
+                var permisosUsuario = permisosClaim.Split(',');
+                return permisosUsuario.Any(p => p.Trim().Equals("ver restaurantes"));
+            }
+            return false;
+        });
+    });
+    options.AddPolicy("VerMesasPermiso", policy =>
+    {
+        policy.RequireAssertion(context =>
+        {
+            var permisosClaim = context.User.FindFirst(c => c.Type == "Permisos")?.Value;
+            if (permisosClaim != null)
+            {
+                var permisosUsuario = permisosClaim.Split(',');
+                return permisosUsuario.Any(p => p.Trim().Equals("ver mesas"));
+            }
+            return false;
+        });
+    });
+    options.AddPolicy("VerUsuariosPermiso", policy =>
+    {
+        policy.RequireAssertion(context =>
+        {
+            var permisosClaim = context.User.FindFirst(c => c.Type == "Permisos")?.Value;
+            if (permisosClaim != null)
+            {
+                var permisosUsuario = permisosClaim.Split(',');
+                return permisosUsuario.Any(p => p.Trim().Equals("ver usuarios"));
+            }
+            return false;
+        });
+    });
+    options.AddPolicy("VerClientesPermiso", policy =>
+    {
+        policy.RequireAssertion(context =>
+        {
+            var permisosClaim = context.User.FindFirst(c => c.Type == "Permisos")?.Value;
+            if (permisosClaim != null)
+            {
+                var permisosUsuario = permisosClaim.Split(',');
+                return permisosUsuario.Any(p => p.Trim().Equals("ver clientes"));
+            }
+            return false;
+        });
+    });
+    options.AddPolicy("VerReservasPermiso", policy =>
+    {
+        policy.RequireAssertion(context =>
+        {
+            var permisosClaim = context.User.FindFirst(c => c.Type == "Permisos")?.Value;
+            if (permisosClaim != null)
+            {
+                var permisosUsuario = permisosClaim.Split(',');
+                return permisosUsuario.Any(p => p.Trim().Equals("ver reservas"));
+            }
+            return false;
+        });
+    });
 });
 
 // Registro de servicios
@@ -33,32 +164,14 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-app.UseRouting();
 app.UseSession();
+app.UseRouting();
+app.UseAuthentication();
 app.UseAuthorization();
-
-app.Use(async (context, next) =>
-{
-    var userSession = context.Session.GetString("UsuarioEmail");
-    var path = context.Request.Path.Value.ToLower();
-
-    // Allow access to Home, Login, and static files without redirection
-    if (string.IsNullOrEmpty(userSession) &&
-        !path.Contains("/usuarios/login") &&
-        !path.Contains("/home") &&
-        !path.StartsWith("/css") &&
-        !path.StartsWith("/js") &&
-        !path.StartsWith("/images"))
-    {
-        context.Response.Redirect("/Home/Index");
-        return;
-    }
-    await next();
-});
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
-    
+A

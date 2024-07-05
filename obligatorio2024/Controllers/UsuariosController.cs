@@ -10,9 +10,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using obligatorio2024.Models;
+using obligatorio2024.Service;
 
 namespace obligatorio2024.Controllers
 {
+    [Authorize(Policy = "VerUsuariosPermiso")]
     public class UsuariosController : Controller
     {
         private readonly Obligatorio2024Context _context;
@@ -20,6 +22,7 @@ namespace obligatorio2024.Controllers
         public UsuariosController(Obligatorio2024Context context)
         {
             _context = context;
+
         }
 
         // GET: Usuarios
@@ -56,8 +59,6 @@ namespace obligatorio2024.Controllers
         }
 
         // POST: Usuarios/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Nombre,Apellido,Email,Contraseña,Telefono,RolId")] Usuario usuario)
@@ -90,8 +91,6 @@ namespace obligatorio2024.Controllers
         }
 
         // POST: Usuarios/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Nombre,Apellido,Email,Contraseña,Telefono,RolId")] Usuario usuario)
@@ -164,56 +163,6 @@ namespace obligatorio2024.Controllers
             return _context.Usuarios.Any(e => e.Id == id);
         }
 
-        // GET: Usuarios/Login
-        [HttpGet]
-        public IActionResult Login()
-        {
-            return View();
-        }
 
-        // POST: Usuarios/Login
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(string email, string contraseña)
-        {
-            if (ModelState.IsValid)
-            {
-                var usuario = await _context.Usuarios
-                    .FirstOrDefaultAsync(u => u.Email == email && u.Contraseña == contraseña);
-
-                if (usuario != null)
-                {
-                    HttpContext.Session.SetString("UsuarioEmail", usuario.Email);
-                    HttpContext.Session.SetInt32("UsuarioId", usuario.Id);
-                    return RedirectToAction("Index", "Home");
-                }
-                else
-                {
-                    ModelState.AddModelError(string.Empty, "Intento de inicio de sesión no válido.");
-                }
-            }
-            return View();
-        }
-
-        // POST: Usuarios/LogOff
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult LogOff()
-        {
-            HttpContext.Session.Clear();
-            return RedirectToAction("Index", "Home");
-        }
-    
     }
 }
-
-
-
-
-
-
-
-
-
-
-

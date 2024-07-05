@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "Home";
     var weatherData = ViewBag.WeatherData as obligatorio2024.Models.Welcome;
+    var claims = User.Claims.Select(c => new { c.Type, c.Value }).ToList();
 }
 
 <section class="hero d-flex align-items-center">

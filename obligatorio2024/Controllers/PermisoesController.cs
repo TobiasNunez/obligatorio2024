@@ -10,23 +10,23 @@ using obligatorio2024.Models;
 
 namespace obligatorio2024.Controllers
 {
-    [Authorize(Policy = "VerRestaurantesPermiso")]
-    public class RestaurantesController : Controller
+    [Authorize(Policy = "VerPermisosPermiso")]
+    public class PermisoesController : Controller
     {
         private readonly Obligatorio2024Context _context;
 
-        public RestaurantesController(Obligatorio2024Context context)
+        public PermisoesController(Obligatorio2024Context context)
         {
             _context = context;
         }
 
-        // GET: Restaurantes
+        // GET: Permisoes
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Restaurantes.ToListAsync());
+            return View(await _context.Permisos.ToListAsync());
         }
 
-        // GET: Restaurantes/Details/5
+        // GET: Permisoes/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -34,39 +34,62 @@ namespace obligatorio2024.Controllers
                 return NotFound();
             }
 
-            var restaurante = await _context.Restaurantes
+            var permiso = await _context.Permisos
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (restaurante == null)
+            if (permiso == null)
             {
                 return NotFound();
             }
 
-            return View(restaurante);
+            return View(permiso);
         }
 
-        // GET: Restaurantes/Create
+        // GET: Permisoes/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Restaurantes/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Permisoes/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nombre,Dirección,Teléfono,Ciudad")] Restaurante restaurante)
+        public async Task<IActionResult> Create([Bind("Id,NombrePermiso,Descripcion,PermisosSeleccionados")] Permiso permiso)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(restaurante);
+                // Añadir el permiso a la base de datos
+                _context.Add(permiso);
                 await _context.SaveChangesAsync();
+
+                // Asignar permisos a roles seleccionados (si se aplica)
+                var rolesSeleccionados = Request.Form["rolesSeleccionados"].ToString().Split(',').Select(int.Parse).ToList();
+                if (rolesSeleccionados.Any())
+                {
+                    foreach (var rolId in rolesSeleccionados)
+                    {
+                        var rolPermiso = new RolPermiso
+                        {
+                            IdRol = rolId,
+                            IdPermisos = permiso.Id
+                        };
+                        _context.Add(rolPermiso);
+                    }
+                    await _context.SaveChangesAsync();
+                }
+
                 return RedirectToAction(nameof(Index));
             }
-            return View(restaurante);
+
+            // Obtener la lista de roles para asignar al permiso (si se aplica)
+            var roles = await _context.Roles.ToListAsync();
+            ViewBag.Roles = roles;
+
+            return View(permiso);
         }
 
-        // GET: Restaurantes/Edit/5
+
+
+        // GET: Permisoes/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -74,22 +97,20 @@ namespace obligatorio2024.Controllers
                 return NotFound();
             }
 
-            var restaurante = await _context.Restaurantes.FindAsync(id);
-            if (restaurante == null)
+            var permiso = await _context.Permisos.FindAsync(id);
+            if (permiso == null)
             {
                 return NotFound();
             }
-            return View(restaurante);
+            return View(permiso);
         }
 
-        // POST: Restaurantes/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Permisoes/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Nombre,Dirección,Teléfono,Ciudad")] Restaurante restaurante)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,NombrePermiso,Descripcion")] Permiso permiso)
         {
-            if (id != restaurante.Id)
+            if (id != permiso.Id)
             {
                 return NotFound();
             }
@@ -98,12 +119,12 @@ namespace obligatorio2024.Controllers
             {
                 try
                 {
-                    _context.Update(restaurante);
+                    _context.Update(permiso);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!RestauranteExists(restaurante.Id))
+                    if (!PermisoExists(permiso.Id))
                     {
                         return NotFound();
                     }
@@ -114,10 +135,10 @@ namespace obligatorio2024.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(restaurante);
+            return View(permiso);
         }
 
-        // GET: Restaurantes/Delete/5
+        // GET: Permisoes/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -125,34 +146,34 @@ namespace obligatorio2024.Controllers
                 return NotFound();
             }
 
-            var restaurante = await _context.Restaurantes
+            var permiso = await _context.Permisos
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (restaurante == null)
+            if (permiso == null)
             {
                 return NotFound();
             }
 
-            return View(restaurante);
+            return View(permiso);
         }
 
-        // POST: Restaurantes/Delete/5
+        // POST: Permisoes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var restaurante = await _context.Restaurantes.FindAsync(id);
-            if (restaurante != null)
+            var permiso = await _context.Permisos.FindAsync(id);
+            if (permiso != null)
             {
-                _context.Restaurantes.Remove(restaurante);
+                _context.Permisos.Remove(permiso);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool RestauranteExists(int id)
+        private bool PermisoExists(int id)
         {
-            return _context.Restaurantes.Any(e => e.Id == id);
+            return _context.Permisos.Any(e => e.Id == id);
         }
     }
 }

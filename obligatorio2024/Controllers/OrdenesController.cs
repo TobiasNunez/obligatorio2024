@@ -5,10 +5,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 using obligatorio2024.Models;
 
 namespace obligatorio2024.Controllers
 {
+    [Authorize(Policy = "VerOrdenesPermiso")]
     public class OrdenesController : Controller
     {
         private readonly Obligatorio2024Context _context;
@@ -21,7 +23,11 @@ namespace obligatorio2024.Controllers
         // GET: Ordenes
         public async Task<IActionResult> Index()
         {
-            var obligatorio2024Context = _context.Ordenes.Include(o => o.Reserva);
+            var obligatorio2024Context = _context.Ordenes
+                .Include(o => o.Reserva)
+                .ThenInclude(r => r.Cliente)
+                .Include(o => o.Reserva)
+                .ThenInclude(r => r.Mesa);
             return View(await obligatorio2024Context.ToListAsync());
         }
 
@@ -35,6 +41,9 @@ namespace obligatorio2024.Controllers
 
             var ordene = await _context.Ordenes
                 .Include(o => o.Reserva)
+                .ThenInclude(r => r.Cliente)
+                .Include(o => o.Reserva)
+                .ThenInclude(r => r.Mesa)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (ordene == null)
             {
@@ -131,6 +140,9 @@ namespace obligatorio2024.Controllers
 
             var ordene = await _context.Ordenes
                 .Include(o => o.Reserva)
+                .ThenInclude(r => r.Cliente)
+                .Include(o => o.Reserva)
+                .ThenInclude(r => r.Mesa)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (ordene == null)
             {

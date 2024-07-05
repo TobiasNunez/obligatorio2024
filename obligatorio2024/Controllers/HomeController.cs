@@ -1,13 +1,16 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using obligatorio2024.Models;
 using obligatorio2024.Service;
 using System.Diagnostics;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace obligatorio2024.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -23,6 +26,10 @@ namespace obligatorio2024.Controllers
 
         public async Task<IActionResult> Index()
         {
+            var claimsIdentity = User.Identity as ClaimsIdentity;
+            var permisosClaim = claimsIdentity?.FindFirst("Permisos");
+            ViewBag.Permisos = permisosClaim?.Value?.Split(',');
+
             var menuItems = _context.Menus.ToList();
 
             // Obtener datos del clima

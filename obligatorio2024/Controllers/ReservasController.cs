@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +10,7 @@ using obligatorio2024.Service;
 
 namespace obligatorio2024.Controllers
 {
+    [Authorize(Policy = "VerReservasPermiso")]
     public class ReservasController : Controller
     {
         private readonly Obligatorio2024Context _context;
