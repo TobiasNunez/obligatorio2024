@@ -20,16 +20,19 @@ namespace obligatorio2024.Controllers
             _context = context;
         }
 
-        // GET: Ordenes
         public async Task<IActionResult> Index()
         {
             var obligatorio2024Context = _context.Ordenes
                 .Include(o => o.Reserva)
                 .ThenInclude(r => r.Cliente)
                 .Include(o => o.Reserva)
-                .ThenInclude(r => r.Mesa);
+                .ThenInclude(r => r.Mesa)
+                .Include(o => o.OrdenDetalles)
+                .ThenInclude(od => od.Menu);
+
             return View(await obligatorio2024Context.ToListAsync());
         }
+
 
 
         // GET: Ordenes/Details/5
@@ -279,18 +282,20 @@ namespace obligatorio2024.Controllers
             return View(ordene);
         }
 
-        // POST: Ordenes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var ordene = await _context.Ordenes.FindAsync(id);
+            var ordene = await _context.Ordenes
+                .Include(o => o.OrdenDetalles)
+                .FirstOrDefaultAsync(o => o.Id == id);
+
             if (ordene != null)
             {
                 _context.Ordenes.Remove(ordene);
+                await _context.SaveChangesAsync();
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
