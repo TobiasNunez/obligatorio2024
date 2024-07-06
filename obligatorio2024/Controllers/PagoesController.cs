@@ -4,11 +4,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Microsoft.EntityFrameworkCore;
 using obligatorio2024.Models;
 using obligatorio2024.Service;
-using RestSharp;
 
 namespace obligatorio2024.Controllers
 {
@@ -51,7 +49,6 @@ namespace obligatorio2024.Controllers
             return View(await pagos.ToListAsync());
         }
 
-
         // GET: Pagoes/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -85,53 +82,66 @@ namespace obligatorio2024.Controllers
         {
             if (ModelState.IsValid)
             {
-                var reserva = await _context.Reservas
-                    .Include(r => r.Mesa)
-                    .FirstOrDefaultAsync(r => r.Id == pago.ReservaId);
-
-                if (reserva == null)
+                try
                 {
-                    ModelState.AddModelError("ReservaId", "La reserva no existe.");
+                    var reserva = await _context.Reservas
+                        .Include(r => r.Mesa)
+                        .Include(r => r.Cliente)
+                        .FirstOrDefaultAsync(r => r.Id == pago.ReservaId);
+
+                    if (reserva == null)
+                    {
+                        ModelState.AddModelError("ReservaId", "La reserva no existe.");
+                        return View(pago);
+                    }
+
+                    var existingPago = await _context.Pagos
+                        .FirstOrDefaultAsync(p => p.ReservaId == pago.ReservaId && p.Id != pago.Id);
+
+                    if (existingPago != null)
+                    {
+                        ModelState.AddModelError("ReservaId", "Ya existe un pago para esta reserva.");
+                        return View(pago);
+                    }
+
+                    var (nuevoPago, cotizacion) = await _pagoService.CrearPagoAsync(pago.Monto, pago.Moneda, pago.MetodoPago);
+                    nuevoPago.ReservaId = pago.ReservaId;
+
+                    if (reserva.Cliente != null)
+                    {
+                        nuevoPago.Monto = AplicarDescuento(nuevoPago.Monto, reserva.Cliente.TipoCliente);
+                    }
+
+                    _context.Add(nuevoPago);
+                    await _context.SaveChangesAsync();
+
+                    cotizacion.PagosId = nuevoPago.Id; // Asignamos el ID del pago después de guardar el pago
+                    _context.Add(cotizacion);
+
+                    // Actualizar el estado de la mesa a "Disponible"
+                    if (reserva.Mesa != null)
+                    {
+                        reserva.Mesa.Estado = "Disponible";
+                        _context.Update(reserva.Mesa);
+                    }
+
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (ArgumentException ex)
+                {
+                    ModelState.AddModelError(string.Empty, ex.Message);
                     return View(pago);
                 }
-
-                var existingPago = await _context.Pagos
-                    .FirstOrDefaultAsync(p => p.ReservaId == pago.ReservaId && p.Id != pago.Id);
-
-                if (existingPago != null)
+                catch (Exception ex)
                 {
-                    ModelState.AddModelError("ReservaId", "Ya existe un pago para esta reserva.");
+                    ModelState.AddModelError(string.Empty, "Error al procesar el pago.");
+                    Console.WriteLine(ex);
                     return View(pago);
                 }
-
-                var (nuevoPago, cotizacion) = await _pagoService.CrearPagoAsync(pago.Monto, pago.Moneda, pago.MetodoPago);
-                nuevoPago.ReservaId = pago.ReservaId;
-
-                if (reserva.Cliente != null)
-                {
-                    nuevoPago.Monto = AplicarDescuento(nuevoPago.Monto, reserva.Cliente.TipoCliente);
-                }
-
-                _context.Add(nuevoPago);
-                await _context.SaveChangesAsync();
-
-                cotizacion.PagosId = nuevoPago.Id; // Asignamos el ID del pago después de guardar el pago
-                _context.Add(cotizacion);
-
-                // Actualizar el estado de la mesa a "Disponible"
-                if (reserva.Mesa != null)
-                {
-                    reserva.Mesa.Estado = "Disponible";
-                    _context.Update(reserva.Mesa);
-                }
-
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
             }
             return View(pago);
         }
-
-
 
         [HttpGet]
         public async Task<IActionResult> GetMonto(int reservaId)
@@ -225,7 +235,6 @@ namespace obligatorio2024.Controllers
             }
             return View(pago);
         }
-
 
         // GET: Pagoes/Delete/5
         public async Task<IActionResult> Delete(int? id)

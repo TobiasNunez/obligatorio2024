@@ -20,32 +20,34 @@ namespace obligatorio2024.Service
 
         public async Task<decimal?> GetExchangeRate(string sourceCurrency, string targetCurrency)
         {
+            if (sourceCurrency == "UYU" && targetCurrency == "UYU")
+            {
+                return 1; // Si la moneda de origen y destino es UYU, el tipo de cambio es 1
+            }
+
             var request = new RestRequest($"/live?access_key=f55f846b492d3599fcf319f0f278583c&currencies={targetCurrency}&source={sourceCurrency}", Method.Get);
             RestResponse response = await _client.ExecuteAsync(request);
 
             if (response.IsSuccessful)
             {
                 var data = JObject.Parse(response.Content);
-                var quotes = data["quotes"];
+                var quotes = data["quotes"] as JObject;
 
-                // Formamos la clave correctamente
+                if (quotes == null)
+                {
+                    throw new ArgumentException("No quotes found in the response.");
+                }
+
                 string key = $"{sourceCurrency}{targetCurrency}";
-                var rate = quotes?[key]?.Value<decimal>();
+                var rate = quotes[key]?.Value<decimal>();
 
-                // Si sourceCurrency es "UYU", retornamos el valor de la tasa
-                if (sourceCurrency == "UYU")
+                if (rate.HasValue)
                 {
                     return rate;
                 }
-                // Si la clave no es correcta (ej: UYU a UYU), devolvemos 1
-                if (sourceCurrency == targetCurrency)
+                else
                 {
-                    return 1;
-                }
-                // Para otras conversiones, retornamos la tasa invertida
-                else if (rate.HasValue)
-                {
-                    return 1 / rate.Value;
+                    throw new ArgumentException($"Exchange rate not found for {key}");
                 }
             }
             else
@@ -54,6 +56,5 @@ namespace obligatorio2024.Service
             }
             return null;
         }
-
     }
 }
