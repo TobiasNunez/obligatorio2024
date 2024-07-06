@@ -55,6 +55,40 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link text-dark" data-bs-toggle="collapse" href="#menuClienteSubMenu" role="button" aria-expanded="false" aria-controls="menuClienteSubMenu">
+                        <img src="https://img.icons8.com/?size=100&id=6899&format=png&color=000000" alt="" class="icono-nav" />
+                        Menú Cliente
+                    </a>
+                    <div class="collapse" id="menuClienteSubMenu">
+                        <ul class="nav flex-column ms-3 submenu-categories">
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Menus" asp-action="Entradas">Entradas</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Menus" asp-action="PlatosPrincipales">Platos Principales</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Menus" asp-action="Guarniciones">Guarniciones</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Menus" asp-action="Postres">Postres</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Menus" asp-action="MenusEspeciales">Menús Especiales</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Menus" asp-action="Bebidas">Bebidas</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Menus" asp-action="BebidasAlcoholicas">Bebidas Alcohólicas</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Menus" asp-action="Brunch">Brunch</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link text-dark" asp-area="" asp-controller="Reseña" asp-action="Index">
                         <img src="https://img.icons8.com/?size=100&id=5456&format=png&color=000000" alt="" class="icono-nav" />
                         Reseñas
@@ -69,6 +103,48 @@
                         </a>
                     </li>
                 }
+                @if (User.Identity.IsAuthenticated && permisos.Contains("ver mesas"))
+                {
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Mesas" asp-action="Index">
+                            <img src="https://img.icons8.com/?size=100&id=eR63rSMC27c2&format=png&color=000000" alt="" class="icono-nav" />
+                            Mesas
+                        </a>
+                    </li>
+                }
+                @if (User.Identity.IsAuthenticated && permisos.Contains("ver reservas"))
+                {
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Reservas" asp-action="Index">
+                            <img src="https://img.icons8.com/?size=100&id=4027&format=png&color=000000" alt="" class="icono-nav" />
+                            Reservas
+                        </a>
+                    </li>
+                }
+                @if (User.Identity.IsAuthenticated && permisos.Contains("ver ordenes"))
+                {
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Ordenes" asp-action="Index">
+                            <img src="https://img.icons8.com/?size=100&id=4255&format=png&color=000000" alt="" class="icono-nav" />
+                            Ordenes
+                        </a>
+                    </li>
+                }
+                @if (User.Identity.IsAuthenticated && permisos.Contains("ver pagos"))
+                {
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Pagoes" asp-action="Index">
+                            <img src="https://img.icons8.com/?size=100&id=77124&format=png&color=000000" alt="" class="icono-nav" />
+                            Pagos
+                        </a>
+                    </li>
+                }
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Cotizacions" asp-action="Index">
+                        <img src="https://img.icons8.com/?size=100&id=uHls6vb2ek05&format=png&color=000000" alt="" class="icono-nav" />
+                        Cotizaciones
+                    </a>
+                </li>
                 @if (User.Identity.IsAuthenticated && permisos.Contains("ver roles"))
                 {
                     <li class="nav-item">
@@ -84,24 +160,6 @@
                         <a class="nav-link text-dark" asp-area="" asp-controller="Permisoes" asp-action="Index">
                             <img src="https://img.icons8.com/?size=100&id=5456&format=png&color=000000" alt="" class="icono-nav" />
                             Permisos
-                        </a>
-                    </li>
-                }
-                @if (User.Identity.IsAuthenticated && permisos.Contains("ver mesas"))
-                {
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Mesas" asp-action="Index">
-                            <img src="https://img.icons8.com/?size=100&id=eR63rSMC27c2&format=png&color=000000" alt="" class="icono-nav" />
-                            Mesas
-                        </a>
-                    </li>
-                }
-                @if (User.Identity.IsAuthenticated && permisos.Contains("ver ordenes"))
-                {
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Ordenes" asp-action="Index">
-                            <img src="https://img.icons8.com/?size=100&id=4255&format=png&color=000000" alt="" class="icono-nav" />
-                            Ordenes
                         </a>
                     </li>
                 }

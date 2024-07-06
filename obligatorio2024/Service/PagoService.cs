@@ -12,9 +12,35 @@ namespace obligatorio2024.Service
             _currencyService = currencyService;
         }
 
-        public async Task<Pago> CrearPagoAsync(decimal monto, string moneda, string metodoPago)
+
+        public async Task<(Pago pago, Cotizacion cotizacion)> CrearPagoAsync(decimal monto, string moneda, string metodoPago)
         {
-            return await Pago.CrearPagoAsync(monto, moneda, metodoPago, _currencyService);
+            var pago = new Pago
+            {
+                Monto = monto,
+                MetodoPago = metodoPago,
+                Moneda = moneda,
+                FechaPago = DateTime.Now
+            };
+
+            // Obtenemos la tasa de cambio en relación a UYU
+            var tipoCambio = await _currencyService.GetExchangeRate("UYU", moneda);
+            if (tipoCambio.HasValue)
+            {
+                pago.TipoCambio = tipoCambio.Value;
+                pago.Monto = monto * tipoCambio.Value; // Calcula el monto en UYU
+            }
+
+            var cotizacion = new Cotizacion
+            {
+                Cotizacion1 = tipoCambio ?? 1,
+                Moneda = moneda,
+                PagosId = pago.Id // Asignamos el ID del pago después de guardar el pago
+            };
+
+            return (pago, cotizacion);
         }
+
+
     }
 }

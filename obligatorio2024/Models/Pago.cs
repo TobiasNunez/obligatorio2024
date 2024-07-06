@@ -20,6 +20,7 @@ public partial class Pago
 
     public decimal? TipoCambio { get; set; }
 
+    public virtual ICollection<Cotizacion> Cotizacions { get; set; } = new List<Cotizacion>();
     public virtual Reserva? Reserva { get; set; }
 
     public static async Task<Pago> CrearPagoAsync(decimal monto, string moneda, string metodoPago, CurrencyService currencyService)

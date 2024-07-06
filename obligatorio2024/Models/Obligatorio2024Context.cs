@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using obligatorio2024.Models;
 
 namespace obligatorio2024.Models;
 
@@ -17,22 +16,36 @@ public partial class Obligatorio2024Context : DbContext
     }
 
     public virtual DbSet<Cliente> Clientes { get; set; }
+
     public virtual DbSet<Clima> Climas { get; set; }
+
+    public virtual DbSet<Cotizacion> Cotizacions { get; set; }
+
     public virtual DbSet<Menu> Menus { get; set; }
+
     public virtual DbSet<Mesa> Mesas { get; set; }
+
     public virtual DbSet<OrdenDetalle> OrdenDetalles { get; set; }
+
     public virtual DbSet<Ordene> Ordenes { get; set; }
+
     public virtual DbSet<Pago> Pagos { get; set; }
+
     public virtual DbSet<Permiso> Permisos { get; set; }
+
     public virtual DbSet<Reserva> Reservas { get; set; }
+
     public virtual DbSet<Reseña> Reseñas { get; set; }
+
     public virtual DbSet<Restaurante> Restaurantes { get; set; }
+
     public virtual DbSet<Role> Roles { get; set; }
+
     public virtual DbSet<Usuario> Usuarios { get; set; }
     public virtual DbSet<RolPermiso> RolPermiso { get; set; }
 
 //    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?Linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
 //        => optionsBuilder.UseSqlServer("Data Source=GOHANSSJ2; Initial Catalog=obligatorio2024; Integrated Security=true; TrustServerCertificate=True");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -79,6 +92,27 @@ public partial class Obligatorio2024Context : DbContext
                 .HasForeignKey(d => d.ReservaId)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_Clima_Reservas");
+        });
+
+        modelBuilder.Entity<Cotizacion>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__Cotizaci__3214EC27E9D1A09F");
+
+            entity.ToTable("Cotizacion");
+
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.Cotizacion1)
+                .HasColumnType("decimal(10, 4)")
+                .HasColumnName("Cotizacion");
+            entity.Property(e => e.Moneda)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.PagosId).HasColumnName("PagosID");
+
+            entity.HasOne(d => d.Pagos).WithMany(p => p.Cotizacions)
+                .HasForeignKey(d => d.PagosId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_Cotizacion_Pagos");
         });
 
         modelBuilder.Entity<Menu>(entity =>
@@ -170,12 +204,23 @@ public partial class Obligatorio2024Context : DbContext
             entity.Property(e => e.Monto).HasColumnType("decimal(10, 2)");
             entity.Property(e => e.ReservaId).HasColumnName("ReservaID");
             entity.Property(e => e.TipoCambio).HasColumnType("decimal(10, 4)");
+        });
 
-            entity.HasOne(d => d.Reserva)
-                .WithMany(p => p.Pagos)
-                .HasForeignKey(d => d.ReservaId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Pagos_Reservas");
+        modelBuilder.Entity<Permiso>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__Permisos__3213E83F01B6833F");
+
+            entity.HasIndex(e => e.NombrePermiso, "UQ__Permisos__4FC6D0ACA966DCA5").IsUnique();
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Descripcion)
+                .HasMaxLength(255)
+                .IsUnicode(false)
+                .HasColumnName("descripcion");
+            entity.Property(e => e.NombrePermiso)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("nombre_permiso");
         });
 
         modelBuilder.Entity<Reserva>(entity =>
@@ -265,8 +310,6 @@ public partial class Obligatorio2024Context : DbContext
                 .HasConstraintName("FK_RolPermiso_Permiso");
         });
 
-
-
         modelBuilder.Entity<Role>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Roles__3214EC2792EFD105");
@@ -280,28 +323,6 @@ public partial class Obligatorio2024Context : DbContext
                 .WithOne(p => p.Rol)
                 .HasForeignKey(p => p.IdRol)
                 .HasConstraintName("FK_RolPermiso_Rol");
-        });
-
-        modelBuilder.Entity<Permiso>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PK__Permisos__3213E83F01B6833F");
-
-            entity.HasIndex(e => e.NombrePermiso, "UQ__Permisos__4FC6D0ACA966DCA5").IsUnique();
-
-            entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.Descripcion)
-                .HasMaxLength(255)
-                .IsUnicode(false)
-                .HasColumnName("descripcion");
-            entity.Property(e => e.NombrePermiso)
-                .HasMaxLength(50)
-                .IsUnicode(false)
-                .HasColumnName("nombre_permiso");
-
-            entity.HasMany(d => d.RolesPermisos)
-                .WithOne(p => p.Permiso)
-                .HasForeignKey(p => p.IdPermisos)
-                .HasConstraintName("FK_RolPermiso_Permiso");
         });
 
         modelBuilder.Entity<Usuario>(entity =>

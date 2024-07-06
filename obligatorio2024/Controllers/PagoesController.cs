@@ -4,9 +4,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Microsoft.EntityFrameworkCore;
 using obligatorio2024.Models;
 using obligatorio2024.Service;
+using RestSharp;
 
 namespace obligatorio2024.Controllers
 {
@@ -83,7 +85,10 @@ namespace obligatorio2024.Controllers
         {
             if (ModelState.IsValid)
             {
-                var reserva = await _context.Reservas.FindAsync(pago.ReservaId);
+                var reserva = await _context.Reservas
+                    .Include(r => r.Mesa)
+                    .FirstOrDefaultAsync(r => r.Id == pago.ReservaId);
+
                 if (reserva == null)
                 {
                     ModelState.AddModelError("ReservaId", "La reserva no existe.");
@@ -92,15 +97,15 @@ namespace obligatorio2024.Controllers
 
                 var existingPago = await _context.Pagos
                     .FirstOrDefaultAsync(p => p.ReservaId == pago.ReservaId && p.Id != pago.Id);
+
                 if (existingPago != null)
                 {
                     ModelState.AddModelError("ReservaId", "Ya existe un pago para esta reserva.");
                     return View(pago);
                 }
 
-                var nuevoPago = await _pagoService.CrearPagoAsync(pago.Monto, pago.Moneda, pago.MetodoPago);
+                var (nuevoPago, cotizacion) = await _pagoService.CrearPagoAsync(pago.Monto, pago.Moneda, pago.MetodoPago);
                 nuevoPago.ReservaId = pago.ReservaId;
-                nuevoPago.FechaPago = DateTime.Now;
 
                 if (reserva.Cliente != null)
                 {
@@ -109,9 +114,37 @@ namespace obligatorio2024.Controllers
 
                 _context.Add(nuevoPago);
                 await _context.SaveChangesAsync();
+
+                cotizacion.PagosId = nuevoPago.Id; // Asignamos el ID del pago después de guardar el pago
+                _context.Add(cotizacion);
+
+                // Actualizar el estado de la mesa a "Disponible"
+                if (reserva.Mesa != null)
+                {
+                    reserva.Mesa.Estado = "Disponible";
+                    _context.Update(reserva.Mesa);
+                }
+
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(pago);
+        }
+
+
+
+        [HttpGet]
+        public async Task<IActionResult> GetMonto(int reservaId)
+        {
+            var orden = await _context.Ordenes.FirstOrDefaultAsync(o => o.ReservaId == reservaId);
+            if (orden != null)
+            {
+                return Json(new { success = true, monto = orden.Total });
+            }
+            else
+            {
+                return Json(new { success = false, message = "No existe una orden para calcular el monto" });
+            }
         }
 
         // GET: Pagoes/Edit/5
@@ -150,11 +183,11 @@ namespace obligatorio2024.Controllers
                         return NotFound();
                     }
 
-                    var nuevoPago = await _pagoService.CrearPagoAsync(pago.Monto, pago.Moneda, pago.MetodoPago);
+                    var (nuevoPago, cotizacion) = await _pagoService.CrearPagoAsync(pago.Monto, pago.Moneda, pago.MetodoPago);
 
                     pagoOriginal.Monto = nuevoPago.Monto;
-                    pagoOriginal.MetodoPago = pago.MetodoPago;
-                    pagoOriginal.Moneda = pago.Moneda;
+                    pagoOriginal.MetodoPago = nuevoPago.MetodoPago;
+                    pagoOriginal.Moneda = nuevoPago.Moneda;
                     pagoOriginal.TipoCambio = nuevoPago.TipoCambio;
 
                     pagoOriginal.ReservaId = pagoOriginal.ReservaId;
@@ -170,6 +203,11 @@ namespace obligatorio2024.Controllers
                     }
 
                     _context.Update(pagoOriginal);
+                    await _context.SaveChangesAsync();
+
+                    cotizacion.PagosId = pagoOriginal.Id; // Asignamos el ID del pago después de guardar el pago
+                    _context.Add(cotizacion);
+
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -187,6 +225,7 @@ namespace obligatorio2024.Controllers
             }
             return View(pago);
         }
+
 
         // GET: Pagoes/Delete/5
         public async Task<IActionResult> Delete(int? id)

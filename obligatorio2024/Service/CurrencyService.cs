@@ -25,16 +25,35 @@ namespace obligatorio2024.Service
 
             if (response.IsSuccessful)
             {
-                var data = Newtonsoft.Json.Linq.JObject.Parse(response.Content);
+                var data = JObject.Parse(response.Content);
                 var quotes = data["quotes"];
-                var rate = quotes[$"{sourceCurrency}{targetCurrency}"]?.Value<decimal>();
-                return rate;
+
+                // Formamos la clave correctamente
+                string key = $"{sourceCurrency}{targetCurrency}";
+                var rate = quotes?[key]?.Value<decimal>();
+
+                // Si sourceCurrency es "UYU", retornamos el valor de la tasa
+                if (sourceCurrency == "UYU")
+                {
+                    return rate;
+                }
+                // Si la clave no es correcta (ej: UYU a UYU), devolvemos 1
+                if (sourceCurrency == targetCurrency)
+                {
+                    return 1;
+                }
+                // Para otras conversiones, retornamos la tasa invertida
+                else if (rate.HasValue)
+                {
+                    return 1 / rate.Value;
+                }
             }
             else
             {
                 Console.WriteLine($"Error: {response.StatusCode} - {response.ErrorMessage}");
-                return null;
             }
+            return null;
         }
+
     }
 }

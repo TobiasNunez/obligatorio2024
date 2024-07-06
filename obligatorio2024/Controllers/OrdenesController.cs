@@ -31,6 +31,7 @@ namespace obligatorio2024.Controllers
             return View(await obligatorio2024Context.ToListAsync());
         }
 
+
         // GET: Ordenes/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -40,11 +41,10 @@ namespace obligatorio2024.Controllers
             }
 
             var ordene = await _context.Ordenes
-                .Include(o => o.Reserva)
-                .ThenInclude(r => r.Cliente)
-                .Include(o => o.Reserva)
-                .ThenInclude(r => r.Mesa)
+                .Include(o => o.OrdenDetalles)
+                .ThenInclude(od => od.Menu)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (ordene == null)
             {
                 return NotFound();
@@ -52,6 +52,8 @@ namespace obligatorio2024.Controllers
 
             return View(ordene);
         }
+
+
 
         // GET: Ordenes/Create
         public IActionResult Create()
@@ -129,6 +131,131 @@ namespace obligatorio2024.Controllers
             ViewData["ReservaId"] = new SelectList(_context.Reservas, "Id", "Id", ordene.ReservaId);
             return View(ordene);
         }
+
+
+
+        // GET: Ordenes/AddDetail/5
+        public IActionResult AddDetail(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            ViewData["OrdenId"] = id;
+            ViewData["MenuId"] = new SelectList(_context.Menus, "Id", "NombrePlato");
+            return View();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddDetail([Bind("OrdenId,MenuId,Cantidad")] OrdenDetalle ordenDetalle)
+        {
+            if (ModelState.IsValid)
+            {
+                var menu = await _context.Menus.FindAsync(ordenDetalle.MenuId);
+                if (menu != null)
+                {
+                    var orden = await _context.Ordenes
+                        .Include(o => o.OrdenDetalles)
+                        .FirstOrDefaultAsync(o => o.Id == ordenDetalle.OrdenId);
+
+                    if (orden != null)
+                    {
+                        var existingDetail = orden.OrdenDetalles
+                            .FirstOrDefault(od => od.MenuId == ordenDetalle.MenuId);
+
+                        if (existingDetail != null)
+                        {
+                            existingDetail.Cantidad += ordenDetalle.Cantidad;
+                        }
+                        else
+                        {
+                            orden.OrdenDetalles.Add(ordenDetalle);
+                        }
+
+                        orden.Total += menu.Precio * ordenDetalle.Cantidad;
+                        _context.Update(orden);
+                        await _context.SaveChangesAsync();
+
+                        return RedirectToAction(nameof(Details), new { id = ordenDetalle.OrdenId });
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Orden no encontrada.");
+                    }
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Menu no encontrado.");
+                }
+            }
+            ViewData["MenuId"] = new SelectList(_context.Menus, "Id", "NombrePlato", ordenDetalle.MenuId);
+            return View(ordenDetalle);
+        }
+
+        public async Task<IActionResult> IncrementDetail(int id)
+        {
+            var detail = await _context.OrdenDetalles.FindAsync(id);
+            if (detail != null)
+            {
+                var orden = await _context.Ordenes.FindAsync(detail.OrdenId);
+                var menu = await _context.Menus.FindAsync(detail.MenuId);
+
+                if (orden != null && menu != null)
+                {
+                    detail.Cantidad++;
+                    orden.Total += menu.Precio;
+                    _context.Update(detail);
+                    _context.Update(orden);
+                    await _context.SaveChangesAsync();
+                }
+            }
+            return RedirectToAction(nameof(Details), new { id = detail.OrdenId });
+        }
+
+        public async Task<IActionResult> DecrementDetail(int id)
+        {
+            var detail = await _context.OrdenDetalles.FindAsync(id);
+            if (detail != null)
+            {
+                var orden = await _context.Ordenes.FindAsync(detail.OrdenId);
+                var menu = await _context.Menus.FindAsync(detail.MenuId);
+
+                if (orden != null && menu != null)
+                {
+                    if (detail.Cantidad > 1)
+                    {
+                        detail.Cantidad--;
+                        orden.Total -= menu.Precio;
+                        _context.Update(detail);
+                        _context.Update(orden);
+                        await _context.SaveChangesAsync();
+                    }
+                }
+            }
+            return RedirectToAction(nameof(Details), new { id = detail.OrdenId });
+        }
+
+        public async Task<IActionResult> DeleteDetail(int id)
+        {
+            var detail = await _context.OrdenDetalles.FindAsync(id);
+            if (detail != null)
+            {
+                var orden = await _context.Ordenes.FindAsync(detail.OrdenId);
+                var menu = await _context.Menus.FindAsync(detail.MenuId);
+
+                if (orden != null && menu != null)
+                {
+                    orden.Total -= menu.Precio * detail.Cantidad;
+                    _context.OrdenDetalles.Remove(detail);
+                    _context.Update(orden);
+                    await _context.SaveChangesAsync();
+                }
+            }
+            return RedirectToAction(nameof(Details), new { id = detail.OrdenId });
+        }
+
+
 
         // GET: Ordenes/Delete/5
         public async Task<IActionResult> Delete(int? id)

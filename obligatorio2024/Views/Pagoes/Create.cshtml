@@ -18,8 +18,9 @@
             </div>
             <div class="form-group">
                 <label asp-for="Monto" class="control-label"></label>
-                <input asp-for="Monto" class="form-control" />
+                <input asp-for="Monto" class="form-control" id="monto" readonly />
                 <span asp-validation-for="Monto" class="text-danger"></span>
+                <span id="montoError" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="MetodoPago" class="control-label"></label>
@@ -54,4 +55,21 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    <script>
+        $(document).ready(function () {
+            $('#ReservaId').on('change', function () {
+                var reservaId = $(this).val();
+                $.getJSON('@Url.Action("GetMonto")', { reservaId: reservaId }, function (data) {
+                    if (data.success) {
+                        $('#monto').val(data.monto);
+                        $('#montoError').text('');
+                    } else {
+                        $('#monto').val('');
+                        $('#montoError').text(data.message);
+                    }
+                });
+            });
+        });
+    </script>
 }
