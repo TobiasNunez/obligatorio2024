@@ -606,3 +606,115 @@ img {
         transform: translateY(0);
     }
 }
+.star-icon {
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    margin-right: 2px;
+}
+
+.fill-primary {
+    fill: gold; /* o el color que prefieras para las estrellas llenas */
+}
+
+.fill-muted {
+    fill: lightgray; /* o el color que prefieras para las estrellas vacías */
+}
+.reseñas-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Crea dos columnas */
+    gap: 20px;
+    width: 100%;
+    margin: 0; /* Mueve el contenedor hacia la izquierda */
+}
+
+.review-container {
+    box-sizing: border-box; /* Incluye padding y border en el ancho y alto total */
+    padding: 15px; /* Ajusta el padding */
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Añade una sombra suave */
+    max-width: 100%; /* Asegura que cada tarjeta ocupe el 100% del ancho del contenedor */
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px; /* Reduce el margen inferior para acercar el nombre al texto */
+}
+
+.review-rating {
+    display: flex;
+    align-items: center;
+}
+
+.star-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+}
+
+.fill-primary {
+    fill: gold; /* Color para las estrellas llenas */
+}
+
+.fill-muted {
+    fill: lightgray; /* Color para las estrellas vacías */
+}
+
+.comment-text {
+    margin-top: 5px; /* Reduce el margen superior para acercar el comentario al nombre */
+    max-height: 100px; /* Ajusta la altura máxima del comentario */
+    overflow-y: auto; /* Agrega una barra de desplazamiento si el texto es demasiado largo */
+    word-wrap: break-word; /* Asegura que el texto se ajuste al ancho del contenedor */
+    white-space: pre-wrap; /* Mantiene los saltos de línea y espacios en blanco */
+    font-size: 12px; /* Ajusta el tamaño de la fuente */
+    line-height: 1.4; /* Ajusta el espaciado entre líneas */
+    color: #333; /* Color del texto */
+}
+
+.review-actions {
+    margin-top: 10px; /* Ajusta el espacio superior de los botones */
+    display: flex;
+    gap: 10px; /* Espacio entre los botones */
+    justify-content: flex-start; /* Alinea los botones a la izquierda */
+}
+
+    .review-actions .btn {
+        padding: 8px 12px; /* Ajusta el padding de los botones */
+        font-size: 12px; /* Ajusta el tamaño de la fuente de los botones */
+        border-radius: 5px; /* Esquinas redondeadas para los botones */
+        transition: background-color 0.3s ease, color 0.3s ease; /* Añade una transición suave */
+    }
+
+    .review-actions .btn-warning {
+        background-color: #f0ad4e; /* Color de fondo para el botón de editar */
+        color: #fff; /* Color del texto */
+        border: none; /* Sin borde */
+    }
+
+        .review-actions .btn-warning:hover {
+            background-color: #ec971f; /* Color de fondo al pasar el mouse */
+        }
+
+    .review-actions .btn-info {
+        background-color: #5bc0de; /* Color de fondo para el botón de detalles */
+        color: #fff; /* Color del texto */
+        border: none; /* Sin borde */
+    }
+
+        .review-actions .btn-info:hover {
+            background-color: #31b0d5; /* Color de fondo al pasar el mouse */
+        }
+
+    .review-actions .btn-danger {
+        background-color: #d9534f; /* Color de fondo para el botón de borrar */
+        color: #fff; /* Color del texto */
+        border: none; /* Sin borde */
+    }
+
+        .review-actions .btn-danger:hover {
+            background-color: #c9302c; /* Color de fondo al pasar el mouse */
+        }
