@@ -718,3 +718,68 @@ img {
         .review-actions .btn-danger:hover {
             background-color: #c9302c; /* Color de fondo al pasar el mouse */
         }
+.hero {
+    background-color: #500B0B;
+    padding: 60px 0;
+    border-bottom: 1.5px solid white;
+}
+
+.hero .container {
+    display: flex;
+    align-items: center;
+}
+
+.hero h1 {
+    font-size: 3rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    animation: slide-in-right 1s ease-out;
+}
+
+.hero p {
+    font-size: 1.25rem;
+    color: #FFFF;
+    text-align: center;
+    animation: slide-in-right 1s ease-out;
+}
+
+.section-title h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: #AB9746;
+}
+
+.section-title p {
+    color: #838383;
+}
+
+.card {
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-body {
+    padding: 2rem;
+    background-color: #f7f7f7;
+}
+
+.form-group label {
+    font-weight: bold;
+}
+
+.login-button {
+    background-color: #500B0B;
+    color: white;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+    .login-button:hover {
+        background-color: #AB9746;
+    }
+
+.alert {
+    margin-top: 1rem;
+}
+
