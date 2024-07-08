@@ -5,9 +5,16 @@
 }
 
 <div class="container mt-5">
-    <div class="mb-4">
-        <h1 class="text-3xl font-bold">Reseñas de nuestros clientes</h1>
-        <p class="mt-2 text-sm text-gray-500">Lea lo que nuestros clientes dicen sobre nuestro servicio</p>
+    <div class="mb-4 d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="text-3xl font-bold">Reseñas de nuestros clientes</h1>
+            <p class="mt-2 text-sm text-gray-500">Lea lo que nuestros clientes dicen sobre nuestro servicio</p>
+        </div>
+        <div>
+            <a href="@Url.Action("Create", "Reseña")" class="submit-button">
+                Crear Reseña
+            </a>
+        </div>
     </div>
     <div class="mb-4">
         <form method="get" asp-action="Index">
@@ -55,10 +62,5 @@
                 </div>
             </div>
         }
-    </div>
-    <div class="mt-8 d-flex justify-content-end">
-        <a href="@Url.Action("Create", "Reseña")" class="submit-button">
-            Crear Reseña
-        </a>
     </div>
 </div>
