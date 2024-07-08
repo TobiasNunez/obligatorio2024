@@ -20,27 +20,29 @@ namespace obligatorio2024.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index(int? restauranteId)
+        public async Task<IActionResult> Index(int? restauranteId, string emailCliente)
         {
             var restaurantes = await _context.Restaurantes.ToListAsync();
-            ViewBag.RestauranteId = new SelectList(restaurantes, "Id", "Dirección", restauranteId ?? 1);
-            ViewBag.SelectedRestauranteId = restauranteId ?? 1;
+            ViewBag.RestauranteId = new SelectList(restaurantes, "Id", "Dirección", restauranteId);
+            ViewBag.SelectedRestauranteId = restauranteId;
 
-            var reseñas = _context.Reseñas
+            var reservas = _context.Reservas
                 .Include(r => r.Cliente)
-                .Include(r => r.Restaurante)
+                .Include(r => r.Mesa)
+                .ThenInclude(m => m.Restaurante)
                 .AsQueryable();
 
             if (restauranteId.HasValue)
             {
-                reseñas = reseñas.Where(r => r.RestauranteId == restauranteId.Value);
-            }
-            else
-            {
-                reseñas = reseñas.Where(r => r.RestauranteId == 1);
+                reservas = reservas.Where(r => r.Mesa.RestauranteId == restauranteId.Value);
             }
 
-            return View(await reseñas.ToListAsync());
+            if (!string.IsNullOrEmpty(emailCliente))
+            {
+                reservas = reservas.Where(r => r.Cliente.Email == emailCliente);
+            }
+
+            return View(await reservas.ToListAsync());
         }
 
 
