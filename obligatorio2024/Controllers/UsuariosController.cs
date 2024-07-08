@@ -50,11 +50,10 @@ namespace obligatorio2024.Controllers
 
             return View(usuario);
         }
-
         // GET: Usuarios/Create
         public IActionResult Create()
         {
-            ViewData["RolId"] = new SelectList(_context.Roles, "Id", "Id");
+            ViewData["RolId"] = new SelectList(_context.Roles, "Id", "Nombre");
             return View();
         }
 
@@ -69,7 +68,7 @@ namespace obligatorio2024.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["RolId"] = new SelectList(_context.Roles, "Id", "Id", usuario.RolId);
+            ViewData["RolId"] = new SelectList(_context.Roles, "Id", "Nombre", usuario.RolId);
             return View(usuario);
         }
 
