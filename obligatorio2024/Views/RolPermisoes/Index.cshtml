@@ -7,7 +7,7 @@
 <h1>Index</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-create-custom">Create New</a>
 </p>
 <table class="table">
     <thead>
@@ -32,9 +32,9 @@
                     @Html.DisplayFor(modelItem => item.Permiso.NombrePermiso)
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.IdRol" asp-route-permiso-id="@item.IdPermisos" class="btn btn-custom-icon btn-edit"></a> |
-                    <a asp-action="Details" asp-route-id="@item.IdRol" asp-route-permiso-id="@item.IdPermisos" class="btn btn-custom-icon btn-details"></a> |
-                    <a asp-action="Delete" asp-route-id="@item.IdRol" asp-route-permiso-id="@item.IdPermisos" class="btn btn-custom-icon btn-delete"></a>
+                    <a asp-action="Edit" asp-route-id="@item.IdRol" asp-route-permiso-id="@item.IdPermisos" class="btn btn-create-custom"></a> |
+                    <a asp-action="Details" asp-route-id="@item.IdRol" asp-route-permiso-id="@item.IdPermisos" class="btn btn-create-custom"></a> |
+                    <a asp-action="Delete" asp-route-id="@item.IdRol" asp-route-permiso-id="@item.IdPermisos" class="btn btn-create-custom"></a>
                 </td>
             </tr>
         }
