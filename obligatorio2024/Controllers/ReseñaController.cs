@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -18,12 +17,11 @@ namespace obligatorio2024.Controllers
             _context = context;
         }
 
-        // GET: Reseña
         public async Task<IActionResult> Index(int? restauranteId)
         {
             var restaurantes = await _context.Restaurantes.ToListAsync();
-            ViewBag.RestauranteId = new SelectList(restaurantes, "Id", "Dirección", restauranteId ?? 1);
-            ViewBag.SelectedRestauranteId = restauranteId ?? 1;
+            ViewBag.RestauranteId = new SelectList(restaurantes, "Id", "Nombre", restauranteId);
+            ViewBag.SelectedRestauranteId = restauranteId;
 
             var reseñas = _context.Reseñas
                 .Include(r => r.Cliente)
@@ -33,10 +31,6 @@ namespace obligatorio2024.Controllers
             if (restauranteId.HasValue)
             {
                 reseñas = reseñas.Where(r => r.RestauranteId == restauranteId.Value);
-            }
-            else
-            {
-                reseñas = reseñas.Where(r => r.RestauranteId == 1);
             }
 
             return View(await reseñas.ToListAsync());
@@ -69,7 +63,6 @@ namespace obligatorio2024.Controllers
             return View();
         }
 
-        // POST: Reseña/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,ClienteId,RestauranteId,Puntaje,Comentario,FechaReseña")] Reseña reseña)
@@ -85,6 +78,7 @@ namespace obligatorio2024.Controllers
             ViewData["RestauranteId"] = new SelectList(_context.Restaurantes, "Id", "Nombre", reseña.RestauranteId);
             return View(reseña);
         }
+
 
         // GET: Reseña/Edit/5
         public async Task<IActionResult> Edit(int? id)

@@ -20,48 +20,29 @@ namespace obligatorio2024.Controllers
             _context = context;
         }
 
-        // GET: Reservas
-        public async Task<IActionResult> Index(int? restauranteId, string emailCliente)
+        public async Task<IActionResult> Index(int? restauranteId)
         {
             var restaurantes = await _context.Restaurantes.ToListAsync();
             ViewBag.RestauranteId = new SelectList(restaurantes, "Id", "Dirección", restauranteId ?? 1);
             ViewBag.SelectedRestauranteId = restauranteId ?? 1;
-            ViewBag.EmailCliente = emailCliente;
 
-            var reservas = _context.Reservas
+            var reseñas = _context.Reseñas
                 .Include(r => r.Cliente)
-                .Include(r => r.Mesa)
-                    .ThenInclude(m => m.Restaurante)
+                .Include(r => r.Restaurante)
                 .AsQueryable();
 
             if (restauranteId.HasValue)
             {
-                reservas = reservas.Where(r => r.Mesa.RestauranteId == restauranteId.Value);
+                reseñas = reseñas.Where(r => r.RestauranteId == restauranteId.Value);
             }
             else
             {
-                reservas = reservas.Where(r => r.Mesa.RestauranteId == 1);
+                reseñas = reseñas.Where(r => r.RestauranteId == 1);
             }
 
-            if (!string.IsNullOrEmpty(emailCliente))
-            {
-                // Buscar el cliente por su email
-                var cliente = await _context.Clientes.FirstOrDefaultAsync(c => c.Email == emailCliente);
-                if (cliente != null)
-                {
-                    // Filtrar las reservas por el ID del cliente
-                    reservas = reservas.Where(r => r.ClienteId == cliente.Id);
-                }
-                else
-                {
-                    // Manejar el caso cuando no se encuentra un cliente con el email especificado
-                    // Aquí, simplemente devolveremos un conjunto vacío de reservas.
-                    return View(Enumerable.Empty<Reserva>());
-                }
-            }
-
-            return View(await reservas.OrderBy(r => r.FechaReserva).ToListAsync());
+            return View(await reseñas.ToListAsync());
         }
+
 
         // GET: Reservas/Details/5
         public async Task<IActionResult> Details(int? id)

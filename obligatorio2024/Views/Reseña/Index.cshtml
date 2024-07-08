@@ -9,6 +9,16 @@
         <h1 class="text-3xl font-bold">Reseñas de nuestros clientes</h1>
         <p class="mt-2 text-sm text-gray-500">Lea lo que nuestros clientes dicen sobre nuestro servicio</p>
     </div>
+    <div class="mb-4">
+        <form method="get" asp-action="Index">
+            <div class="form-group">
+                <label for="RestauranteId">Selecciona un Restaurante:</label>
+                <select class="form-control" id="RestauranteId" name="restauranteId" asp-items="ViewBag.RestauranteId" onchange="this.form.submit()">
+                    <option value="">Todos los Restaurantes</option>
+                </select>
+            </div>
+        </form>
+    </div>
     <div class="space-y-6">
         @foreach (var reseña in Model)
         {
