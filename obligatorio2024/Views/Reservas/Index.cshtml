@@ -27,7 +27,7 @@
     </div>
     <div class="form-group">
         <label for="EmailCliente">Email del cliente</label>
-        <input type="text" id="EmailCliente" name="emailCliente" class="form-control" "  />
+        <input type="text" id="EmailCliente" name="emailCliente" class="form-control" "   />
     </div>
     <br />
     <div class="form-group">
@@ -87,9 +87,9 @@
                     @Html.DisplayFor(modelItem => item.Mesa.Restaurante.Dirección)
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-custom-icon btn-edit"></a> |
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-custom-icon btn-details"></a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-custom-icon btn-delete"></a>
                 </td>
             </tr>
         }

@@ -17,7 +17,6 @@ html {
     min-height: 100%;
 }
 
-
 body {
     display: flex;
     flex-direction: column;
@@ -41,7 +40,6 @@ body {
         font-size: 0.9em;
         padding-left: 20px;
     }
-
 
 .table {
     width: 100%;
@@ -122,26 +120,10 @@ body {
     text-decoration: none;
 }
 
-.submit-button {
-    padding: 5px 15px; /* Ajusta el padding según sea necesario */
-    border: 1px solid #7C2626;
-    border-radius: 10px; /* Esquinas redondeadas con un radio de 10 píxeles */
-    background-color: #7C2626;
-    color: #FFFF; /* Color del texto */
-    cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
-    text-decoration: none;
-}
-
-    .submit-button:hover{
-        background:#611414;
-        color:#FFFF;
-    }
-
 .content-wrapper {
     display: flex;
     flex-grow: 1;
 }
-
 
 .logo {
     width: 150px;
@@ -217,12 +199,12 @@ body {
     padding: 0;
 }
 
-{
-    box-sizing: border-box
+* {
+    box-sizing: border-box;
 }
 
 .mySlides1, .mySlides2 {
-    display: none
+    display: none;
 }
 
 img {
@@ -372,8 +354,6 @@ img {
     right: 1rem;
 }
 
-
-
 .section-title {
     text-align: center;
     margin-bottom: 2rem;
@@ -393,7 +373,6 @@ img {
     height: 12rem;
     object-fit: cover;
 }
-
 
 .card-body {
     background-color: #752929;
@@ -533,6 +512,66 @@ img {
         border-color: #0062cc;
     }
 
+.btn-custom {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    transition-duration: 0.4s;
+}
+
+    .btn-custom:hover {
+        background-color: white;
+        color: black;
+        border: 2px solid #007bff;
+    }
+
+.btn-danger-custom {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    transition-duration: 0.4s;
+}
+
+    .btn-danger-custom:hover {
+        background-color: white;
+        color: black;
+        border: 2px solid #dc3545;
+    }
+
+.btn-secondary-custom {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    transition-duration: 0.4s;
+}
+
+    .btn-secondary-custom:hover {
+        background-color: white;
+        color: black;
+        border: 2px solid #6c757d;
+    }
+
 .star-icon {
     width: 24px; /* Asegúrate de que las estrellas tengan suficiente tamaño */
     height: 24px; /* Asegúrate de que las estrellas tengan suficiente tamaño */
@@ -621,6 +660,7 @@ img {
         transform: translateY(0);
     }
 }
+
 .star-icon {
     width: 20px;
     height: 20px;
@@ -635,6 +675,7 @@ img {
 .fill-muted {
     fill: lightgray; /* o el color que prefieras para las estrellas vacías */
 }
+
 .reseñas-container {
     display: grid;
     grid-template-columns: repeat(2, 1fr); /* Crea dos columnas */
@@ -733,89 +774,38 @@ img {
         .review-actions .btn-danger:hover {
             background-color: #c9302c; /* Color de fondo al pasar el mouse */
         }
-.hero {
-    background-color: #500B0B;
-    padding: 60px 0;
-    border-bottom: 1.5px solid white;
+
+/* Botón con icono */
+.btn-custom-icon {
+    display: inline-block;
+    width: 24px; /* Ajusta el ancho según sea necesario */
+    height: 24px; /* Ajusta la altura según sea necesario */
+    background-size: contain; /* Ajusta el tamaño de la imagen dentro del botón */
+    background-repeat: no-repeat; /* Evita la repetición de la imagen */
+    background-position: center; /* Centra la imagen dentro del botón */
+    border: none; /* Elimina el borde del botón */
+    margin-right: 5px; /* Espacio entre botones */
+    vertical-align: middle; /* Alineación vertical */
+    text-indent: -9999px; /* Oculta el texto */
 }
 
-.hero .container {
-    display: flex;
-    align-items: center;
+/* Iconos específicos */
+.btn-create {
+    background-image: url('/images/create.png');
 }
 
-.hero h1 {
-    font-size: 3rem;
-    font-weight: bold;
-    margin-bottom: 20px;
-    animation: slide-in-right 1s ease-out;
+.btn-edit {
+    background-image: url('/images/edit.png');
 }
 
-.hero p {
-    font-size: 1.25rem;
-    color: #FFFF;
-    text-align: center;
-    animation: slide-in-right 1s ease-out;
+.btn-details {
+    background-image: url('/images/details.png');
 }
 
-.section-title h2 {
-    font-size: 2rem;
-    margin-bottom: 1rem;
-    color: #AB9746;
+.btn-delete {
+    background-image: url('/images/delete.png');
 }
 
-.section-title p {
-    color: #838383;
-}
-
-.card {
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.card-body {
-    padding: 2rem;
-    background-color: #7A1919;
-}
-
-.form-group label {
-    font-weight: bold;
-}
-
-
-.alert {
-    margin-top: 1rem;
-}
-
-
-
-.avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    overflow: hidden;
-}
-
-.star-icon {
-    width: 20px;
-    height: 20px;
-}
-
-    .star-icon.filled {
-        fill: #FFD700;
-    }
-
-    .star-icon.empty {
-        fill: none;
-        stroke: #FFD700;
-        stroke-width: 2;
-    }
-
-.text-gray-500 {
-    color: #6b7280;
-}
-
-.text-gray-700 {
-    color: #374151;
+.btn-back {
+    background-image: url('/images/atras.png');
 }

@@ -7,7 +7,7 @@
 <h1>Ordenes</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-primary btn-custom">Create New</a>
 </p>
 <table class="table">
     <thead>
@@ -20,6 +20,12 @@
             </th>
             <th>
                 Mesa
+            </th>
+            <th>
+                Cliente Nombre
+            </th>
+            <th>
+                Cliente Email
             </th>
             <th></th>
         </tr>
@@ -35,13 +41,19 @@
                     @Html.DisplayFor(modelItem => item.Reserva.Id)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Reserva.Mesa.NumeroMesa) 
+                    @Html.DisplayFor(modelItem => item.Reserva.Mesa.NumeroMesa)
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a asp-action="AddDetail" asp-route-id="@item.Id">Add Detail</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    @Html.DisplayFor(modelItem => item.Reserva.Cliente.Nombre)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Reserva.Cliente.Email)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-custom-icon btn-edit"></a> |
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-custom-icon btn-details"></a> |
+                    <a asp-action="AddDetail" asp-route-id="@item.Id" class="btn btn-custom-icon btn-create"></a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-custom-icon btn-delete"></a>
                 </td>
             </tr>
         }
