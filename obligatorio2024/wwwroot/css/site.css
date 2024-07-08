@@ -668,6 +668,37 @@ img {
     margin-right: 2px;
 }
 
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.star-icon {
+    width: 20px;
+    height: 20px;
+}
+
+    .star-icon.filled {
+        fill: #FFD700;
+    }
+
+    .star-icon.empty {
+        fill: none;
+        stroke: #FFD700;
+        stroke-width: 2;
+    }
+
+.text-gray-500 {
+    color: #6b7280;
+}
+
+.text-gray-700 {
+    color: #374151;
+}
+
 .fill-primary {
     fill: gold; /* o el color que prefieras para las estrellas llenas */
 }
@@ -711,6 +742,23 @@ img {
     height: 20px;
     margin-right: 5px;
 }
+
+
+.submit-button {
+    padding: 5px 15px; /* Ajusta el padding según sea necesario */
+    border: 1px solid #7C2626;
+    border-radius: 10px; /* Esquinas redondeadas con un radio de 10 píxeles */
+    background-color: #7C2626;
+    color: #FFFF; /* Color del texto */
+    cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+    text-decoration: none;
+}
+
+    .submit-button:hover {
+        background: #611414;
+        color: #FFFF;
+    }
+        
 
 .fill-primary {
     fill: gold; /* Color para las estrellas llenas */
@@ -809,3 +857,4 @@ img {
 .btn-back {
     background-image: url('/images/atras.png');
 }
+
