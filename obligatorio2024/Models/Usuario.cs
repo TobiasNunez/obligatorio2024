@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace obligatorio2024.Models
 {
@@ -7,7 +9,7 @@ namespace obligatorio2024.Models
         public int Id { get; set; }
 
         [Required(ErrorMessage = "El nombre es obligatorio.")]
-        [StringLength(50, ErrorMessage = "El nombre no puede tener más de 50 caracteres.")]
+        [StringLength(30, ErrorMessage = "El nombre no puede tener más de 30 caracteres.")]
         public string Nombre { get; set; } = null!;
 
         [Required(ErrorMessage = "El apellido es obligatorio.")]
