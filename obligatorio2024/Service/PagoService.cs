@@ -22,12 +22,14 @@ namespace obligatorio2024.Service
                 FechaPago = DateTime.Now
             };
 
+            decimal coti = 0;
+
             if (moneda != "UYU")
             {
                 var tipoCambio = await _currencyService.GetExchangeRate("UYU", moneda);
                 if (tipoCambio.HasValue)
                 {
-                    pago.TipoCambio = tipoCambio.Value;
+                    coti = tipoCambio.Value;
                     pago.Monto = monto * tipoCambio.Value; // Calcula el monto en UYU
                 }
                 else
@@ -37,12 +39,12 @@ namespace obligatorio2024.Service
             }
             else
             {
-                pago.TipoCambio = 1; // El tipo de cambio es 1 para UYU
+                coti = 1; // El tipo de cambio es 1 para UYU
             }
 
             var cotizacion = new Cotizacion
             {
-                Cotizacion1 = pago.TipoCambio.Value,
+                Cotizacion1 = coti,
                 Moneda = moneda,
                 PagosId = pago.Id // Asignamos el ID del pago después de guardar el pago
             };

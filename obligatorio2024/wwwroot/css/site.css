@@ -122,6 +122,21 @@ body {
     text-decoration: none;
 }
 
+.submit-button {
+    padding: 5px 15px; /* Ajusta el padding según sea necesario */
+    border: 1px solid #7C2626;
+    border-radius: 10px; /* Esquinas redondeadas con un radio de 10 píxeles */
+    background-color: #7C2626;
+    color: #FFFF; /* Color del texto */
+    cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+    text-decoration: none;
+}
+
+    .submit-button:hover{
+        background:#611414;
+        color:#FFFF;
+    }
+
 .content-wrapper {
     display: flex;
     flex-grow: 1;
@@ -761,25 +776,46 @@ img {
 
 .card-body {
     padding: 2rem;
-    background-color: #f7f7f7;
+    background-color: #7A1919;
 }
 
 .form-group label {
     font-weight: bold;
 }
 
-.login-button {
-    background-color: #500B0B;
-    color: white;
-    border: none;
-    transition: background-color 0.3s ease;
-}
-
-    .login-button:hover {
-        background-color: #AB9746;
-    }
 
 .alert {
     margin-top: 1rem;
 }
 
+
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.star-icon {
+    width: 20px;
+    height: 20px;
+}
+
+    .star-icon.filled {
+        fill: #FFD700;
+    }
+
+    .star-icon.empty {
+        fill: none;
+        stroke: #FFD700;
+        stroke-width: 2;
+    }
+
+.text-gray-500 {
+    color: #6b7280;
+}
+
+.text-gray-700 {
+    color: #374151;
+}

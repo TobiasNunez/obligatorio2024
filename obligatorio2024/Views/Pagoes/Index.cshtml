@@ -29,6 +29,7 @@
 
 <p>
     <a asp-action="Create" class="btn btn-success">Create New</a>
+    <a asp-action="Index" asp-controller="Climas" class="btn btn-primary">Consultar Clima</a>
 </p>
 
 <table class="table table-bordered">
@@ -39,7 +40,7 @@
             <th>@Html.DisplayNameFor(model => model.FechaPago)</th>
             <th>@Html.DisplayNameFor(model => model.MetodoPago)</th>
             <th>@Html.DisplayNameFor(model => model.Moneda)</th>
-            <th>@Html.DisplayNameFor(model => model.TipoCambio)</th>
+            <th>@Html.DisplayNameFor(model => model.Descuento)</th>
             <th>@Html.DisplayNameFor(model => model.Reserva.Id)</th>
             <th>Actions</th>
         </tr>
@@ -53,7 +54,7 @@
                 <td>@Html.DisplayFor(modelItem => item.FechaPago)</td>
                 <td>@Html.DisplayFor(modelItem => item.MetodoPago)</td>
                 <td>@Html.DisplayFor(modelItem => item.Moneda)</td>
-                <td>@Html.DisplayFor(modelItem => item.TipoCambio)</td>
+                <td>@Html.DisplayFor(modelItem => item.Descuento)</td>
                 <td>@Html.DisplayFor(modelItem => item.Reserva.Id)</td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary">Edit</a>

@@ -10,7 +10,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="AddDetail">
+        <form asp-action="AddDetail" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="OrdenId" value="@ViewData["OrdenId"]" />
             <div class="form-group">

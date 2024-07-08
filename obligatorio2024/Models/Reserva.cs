@@ -22,5 +22,4 @@ public partial class Reserva
     public virtual Mesa? Mesa { get; set; }
 
     public virtual ICollection<Ordene> Ordenes { get; set; } = new List<Ordene>();
-    public virtual ICollection<Pago> Pagos { get; set; } = new List<Pago>();
 }

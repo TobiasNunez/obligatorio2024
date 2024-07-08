@@ -41,8 +41,8 @@ public partial class Obligatorio2024Context : DbContext
 
     public virtual DbSet<Role> Roles { get; set; }
 
-    public virtual DbSet<Usuario> Usuarios { get; set; }
     public virtual DbSet<RolPermiso> RolPermiso { get; set; }
+    public virtual DbSet<Usuario> Usuarios { get; set; }
 
 //    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
@@ -194,6 +194,7 @@ public partial class Obligatorio2024Context : DbContext
             entity.HasKey(e => e.Id).HasName("PK__Pagos__3214EC2738E94360");
 
             entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.Descuento).HasColumnType("decimal(10, 4)");
             entity.Property(e => e.FechaPago).HasColumnType("datetime");
             entity.Property(e => e.MetodoPago)
                 .HasMaxLength(50)
@@ -203,7 +204,6 @@ public partial class Obligatorio2024Context : DbContext
                 .IsUnicode(false);
             entity.Property(e => e.Monto).HasColumnType("decimal(10, 2)");
             entity.Property(e => e.ReservaId).HasColumnName("ReservaID");
-            entity.Property(e => e.TipoCambio).HasColumnType("decimal(10, 4)");
         });
 
         modelBuilder.Entity<Permiso>(entity =>
@@ -288,28 +288,6 @@ public partial class Obligatorio2024Context : DbContext
                 .IsUnicode(false);
         });
 
-        modelBuilder.Entity<RolPermiso>(entity =>
-        {
-            entity.HasKey(e => new { e.IdRol, e.IdPermisos }).HasName("PK_RolPermiso");
-
-            entity.ToTable("RolPermiso"); // Asegúrate de que el nombre sea "RolPermiso"
-
-            entity.Property(e => e.IdRol).HasColumnName("idRol");
-            entity.Property(e => e.IdPermisos).HasColumnName("idPermisos");
-
-            entity.HasOne(d => d.Rol)
-                .WithMany(p => p.RolesPermisos)
-                .HasForeignKey(d => d.IdRol)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_RolPermiso_Rol");
-
-            entity.HasOne(d => d.Permiso)
-                .WithMany(p => p.RolesPermisos)
-                .HasForeignKey(d => d.IdPermisos)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_RolPermiso_Permiso");
-        });
-
         modelBuilder.Entity<Role>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Roles__3214EC2792EFD105");
@@ -318,11 +296,28 @@ public partial class Obligatorio2024Context : DbContext
             entity.Property(e => e.Nombre)
                 .HasMaxLength(50)
                 .IsUnicode(false);
+        });
 
-            entity.HasMany(d => d.RolesPermisos)
-                .WithOne(p => p.Rol)
-                .HasForeignKey(p => p.IdRol)
+        modelBuilder.Entity<RolPermiso>(entity =>
+        {
+            entity.HasKey(e => new { e.IdRol, e.IdPermisos }).HasName("PK_RolPermiso");
+
+            entity.ToTable("RolPermiso");
+
+            entity.Property(e => e.IdRol).HasColumnName("idRol");
+            entity.Property(e => e.IdPermisos).HasColumnName("idPermisos");
+
+            entity.HasOne(d => d.Rol)
+                .WithMany(p => p.RolPermiso) 
+                .HasForeignKey(d => d.IdRol)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_RolPermiso_Rol");
+
+            entity.HasOne(d => d.Permiso)
+                .WithMany(p => p.RolPermiso)
+                .HasForeignKey(d => d.IdPermisos)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_RolPermiso_Permiso");
         });
 
         modelBuilder.Entity<Usuario>(entity =>
@@ -360,3 +355,4 @@ public partial class Obligatorio2024Context : DbContext
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }
+

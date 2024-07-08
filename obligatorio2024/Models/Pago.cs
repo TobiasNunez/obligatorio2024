@@ -18,35 +18,10 @@ public partial class Pago
 
     public string Moneda { get; set; } = null!;
 
-    public decimal? TipoCambio { get; set; }
+    public decimal? Descuento { get; set; }
 
     public virtual ICollection<Cotizacion> Cotizacions { get; set; } = new List<Cotizacion>();
     public virtual Reserva? Reserva { get; set; }
 
-    public static async Task<Pago> CrearPagoAsync(decimal monto, string moneda, string metodoPago, CurrencyService currencyService)
-    {
-        var pago = new Pago
-        {
-            Monto = monto,
-            FechaPago = DateTime.Now,
-            MetodoPago = metodoPago,
-            Moneda = moneda
-        };
-
-        if (moneda != "UYU")
-        {
-            decimal? tipoCambio = await currencyService.GetExchangeRate("UYU", moneda);
-            pago.TipoCambio = tipoCambio;
-            if (tipoCambio.HasValue)
-            {
-                pago.Monto = monto * tipoCambio.Value; // Calcula el monto en UYU
-            }
-        }
-        else
-        {
-            pago.TipoCambio = 1; // El tipo de cambio es 1 para UYU
-        }
-
-        return pago;
-    }
+ 
 }

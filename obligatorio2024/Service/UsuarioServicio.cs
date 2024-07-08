@@ -31,10 +31,10 @@ namespace obligatorio2024.Service
         {
             // Lógica para obtener permisos por el idRol
             var permisos = await _context.Roles
-                                .Where(r => r.Id == idRol)
-                                .SelectMany(r => r.RolesPermisos)
-                                .Select(rp => rp.Permiso.NombrePermiso)
-                                .ToListAsync();
+                      .Where(r => r.Id == idRol)
+                      .SelectMany(r => r.RolPermiso)
+                      .Select(rp => rp.Permiso.NombrePermiso)
+                      .ToListAsync();
 
             return permisos;
         }

@@ -57,7 +57,6 @@ namespace obligatorio2024.Controllers
         }
 
 
-
         // GET: Ordenes/Create
         public IActionResult Create()
         {
@@ -149,6 +148,7 @@ namespace obligatorio2024.Controllers
             ViewData["MenuId"] = new SelectList(_context.Menus, "Id", "NombrePlato");
             return View();
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddDetail([Bind("OrdenId,MenuId,Cantidad")] OrdenDetalle ordenDetalle)
@@ -180,7 +180,7 @@ namespace obligatorio2024.Controllers
                         _context.Update(orden);
                         await _context.SaveChangesAsync();
 
-                        return RedirectToAction(nameof(Details), new { id = ordenDetalle.OrdenId });
+                        return RedirectToAction("Details", new { id = ordenDetalle.OrdenId });
                     }
                     else
                     {
@@ -195,6 +195,7 @@ namespace obligatorio2024.Controllers
             ViewData["MenuId"] = new SelectList(_context.Menus, "Id", "NombrePlato", ordenDetalle.MenuId);
             return View(ordenDetalle);
         }
+
 
         public async Task<IActionResult> IncrementDetail(int id)
         {
@@ -303,5 +304,8 @@ namespace obligatorio2024.Controllers
         {
             return _context.Ordenes.Any(e => e.Id == id);
         }
+
+
+
     }
 }

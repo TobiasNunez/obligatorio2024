@@ -12,5 +12,5 @@ public partial class Permiso
     public string? Descripcion { get; set; }
 
     public virtual ICollection<Role> IdRols { get; set; } = new List<Role>();
-    public virtual ICollection<RolPermiso> RolesPermisos { get; set; } = new List<RolPermiso>();
+    public virtual ICollection<RolPermiso> RolPermiso { get; set; } = new List<RolPermiso>();
 }

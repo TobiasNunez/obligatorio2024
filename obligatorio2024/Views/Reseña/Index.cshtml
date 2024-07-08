@@ -1,71 +1,55 @@
 ﻿@model IEnumerable<obligatorio2024.Models.Reseña>
 
 @{
-    ViewData["Title"] = "Index";
-    var selectedRestauranteId = ViewBag.SelectedRestauranteId as int?;
+    ViewData["Title"] = "Reseñas de nuestros clientes";
 }
 
-<h1>Reseñas</h1>
-
-<form method="get" class="form-inline mb-3">
-    <div class="form-group">
-        <label for="RestauranteId" class="mr-2">Restaurante</label>
-        <select id="RestauranteId" name="restauranteId" class="form-control" onchange="this.form.submit()">
-            @foreach (var item in (SelectList)ViewBag.RestauranteId)
-            {
-                @if (item.Value == selectedRestauranteId.ToString())
-                {
-                            <option value="@item.Value" selected>@item.Text</option>
-                }
-                else
-                {
-                            <option value="@item.Value">@item.Text</option>
-                }
-            }
-        </select>
+<div class="container mt-5">
+    <div class="mb-4">
+        <h1 class="text-3xl font-bold">Reseñas de nuestros clientes</h1>
+        <p class="mt-2 text-sm text-gray-500">Lea lo que nuestros clientes dicen sobre nuestro servicio</p>
     </div>
-    <a asp-action="Create" class="btn btn-primary ml-3">Crear Nueva Reseña</a>
-</form>
-
-<div class="reseñas-container">
-    @foreach (var item in Model)
-    {
-            <div class="review-container">
-                <div class="review-header">
-                    <div class="font-semibold">@item.Cliente.Nombre</div>
-                    <div class="review-rating">
-                    @Html.Raw(GenerateStars(item.Puntaje))
-                    </div>
+    <div class="space-y-6">
+        @foreach (var reseña in Model)
+        {
+            <div class="d-flex align-items-start mb-4">
+                <div class="avatar">
+                    <img src="~/images/avatar-client.png" alt="@(reseña.Cliente?.Nombre)" class="img-fluid">
                 </div>
-                <div class="comment-text">
-                    <div class="comment-content">
-                    @item.Comentario
+                <div class="ms-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h4 class="mb-0">@reseña.Cliente?.Nombre</h4>
+                            <div class="d-flex align-items-center">
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    if (i <= reseña.Puntaje) // Número de estrellas llenas
+                                    {
+                                        <svg class="star-icon filled" width="20" height="20" viewBox="0 0 24 24">
+                                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                                        </svg>
+                                    }
+                                    else
+                                    {
+                                        <svg class="star-icon empty" width="20" height="20" viewBox="0 0 24 24">
+                                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                                        </svg>
+                                    }
+                                }
+                            </div>
+                        </div>
+                        <div class="text-sm text-gray-500">@reseña.FechaReseña.ToShortDateString()</div>
                     </div>
-                </div>
-                <div class="review-actions">
-                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning">Editar</a>
-                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info">Detalles</a>
-                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Borrar</a>
+                    <p class="mt-2 text-gray-700">
+                        @reseña.Comentario
+                    </p>
                 </div>
             </div>
-    }
-</div>
-
-@functions {
-    private string GenerateStars(int rating)
-    {
-        string stars = string.Empty;
-        for (int i = 0; i < 5; i++)
-        {
-            if (i < rating)
-            {
-                stars += "<svg class=\"star-icon fill-primary\"><polygon points=\"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2\" /></svg>";
-            }
-            else
-            {
-                stars += "<svg class=\"star-icon fill-muted stroke-muted-foreground\"><polygon points=\"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2\" /></svg>";
-            }
         }
-        return stars;
-    }
-}
+    </div>
+    <div class="mt-8 d-flex justify-content-end">
+        <a href="@Url.Action("Create", "Reseña")" class="submit-button">
+            Crear Reseña
+        </a>
+    </div>
+</div>

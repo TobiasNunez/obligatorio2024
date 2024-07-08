@@ -4,6 +4,7 @@ using obligatorio2024.Service;
 using Microsoft.AspNetCore.Session;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using System.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 

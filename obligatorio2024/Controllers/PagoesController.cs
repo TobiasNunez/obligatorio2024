@@ -15,11 +15,13 @@ namespace obligatorio2024.Controllers
     {
         private readonly Obligatorio2024Context _context;
         private readonly PagoService _pagoService;
+        private readonly WeatherService _weatherService;
 
-        public PagoesController(Obligatorio2024Context context, PagoService pagoService)
+        public PagoesController(Obligatorio2024Context context, PagoService pagoService, WeatherService weatherService)
         {
             _context = context;
             _pagoService = pagoService;
+            _weatherService = weatherService;
         }
 
         // GET: Pagoes
@@ -78,7 +80,7 @@ namespace obligatorio2024.Controllers
         // POST: Pagoes/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ReservaId,Monto,MetodoPago,Moneda")] Pago pago)
+        public async Task<IActionResult> Create([Bind("ReservaId,Monto,MetodoPago,Moneda,Descuento")] Pago pago)
         {
             if (ModelState.IsValid)
             {
@@ -86,6 +88,7 @@ namespace obligatorio2024.Controllers
                 {
                     var reserva = await _context.Reservas
                         .Include(r => r.Mesa)
+                        .ThenInclude(m => m.Restaurante)
                         .Include(r => r.Cliente)
                         .FirstOrDefaultAsync(r => r.Id == pago.ReservaId);
 
@@ -107,10 +110,27 @@ namespace obligatorio2024.Controllers
                     var (nuevoPago, cotizacion) = await _pagoService.CrearPagoAsync(pago.Monto, pago.Moneda, pago.MetodoPago);
                     nuevoPago.ReservaId = pago.ReservaId;
 
+                    decimal descuentoCliente = 0;
+                    decimal descuentoClima = 0;
+
+                    // Aplicar descuento del cliente
                     if (reserva.Cliente != null)
                     {
-                        nuevoPago.Monto = AplicarDescuento(nuevoPago.Monto, reserva.Cliente.TipoCliente);
+                        var porcentajeDescuentoCliente = ObtenerPorcentajeDescuentoCliente(reserva.Cliente.TipoCliente);
+                        descuentoCliente = nuevoPago.Monto * porcentajeDescuentoCliente;
                     }
+
+                    // Crear la entrada de clima y aplicar descuentos basados en el clima
+                    var restaurante = await _context.Restaurantes.FirstOrDefaultAsync(r => r.Id == reserva.Mesa.RestauranteId);
+                    if (restaurante != null)
+                    {
+                        var clima = await CreateClimaEntryAsync(reserva.FechaReserva, reserva.Id, restaurante.Ciudad);
+                        var porcentajeDescuentoClima = ObtenerPorcentajeDescuentoClima(clima);
+                        descuentoClima = nuevoPago.Monto * porcentajeDescuentoClima;
+                    }
+
+                    nuevoPago.Descuento = (decimal?)(descuentoCliente + descuentoClima); // Conversión explícita
+                    nuevoPago.Monto -= nuevoPago.Descuento ?? 0; // Resta el descuento total
 
                     _context.Add(nuevoPago);
                     await _context.SaveChangesAsync();
@@ -157,6 +177,34 @@ namespace obligatorio2024.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetDescuento(int reservaId)
+        {
+            var reserva = await _context.Reservas
+                .Include(r => r.Cliente)
+                .Include(r => r.Mesa)
+                .ThenInclude(m => m.Restaurante)
+                .FirstOrDefaultAsync(r => r.Id == reservaId);
+
+            if (reserva != null && reserva.Cliente != null && reserva.Mesa?.Restaurante != null)
+            {
+                var porcentajeDescuentoCliente = ObtenerPorcentajeDescuentoCliente(reserva.Cliente.TipoCliente);
+                var porcentajeDescuentoClima = 0m;
+
+                var clima = await _context.Climas.FirstOrDefaultAsync(c => c.ReservaId == reservaId);
+                if (clima != null)
+                {
+                    porcentajeDescuentoClima = ObtenerPorcentajeDescuentoClima(clima);
+                }
+
+                var descuentoTotal = (porcentajeDescuentoCliente + porcentajeDescuentoClima) * 100; // Convertir a porcentaje
+
+                return Json(new { success = true, descuento = descuentoTotal });
+            }
+
+            return Json(new { success = false, message = "No se pudo calcular el descuento" });
+        }
+
         // GET: Pagoes/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -176,7 +224,7 @@ namespace obligatorio2024.Controllers
         // POST: Pagoes/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Monto,MetodoPago,Moneda,TipoCambio")] Pago pago)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Monto,MetodoPago,Moneda,Descuento")] Pago pago)
         {
             if (id != pago.Id)
             {
@@ -198,18 +246,37 @@ namespace obligatorio2024.Controllers
                     pagoOriginal.Monto = nuevoPago.Monto;
                     pagoOriginal.MetodoPago = nuevoPago.MetodoPago;
                     pagoOriginal.Moneda = nuevoPago.Moneda;
-                    pagoOriginal.TipoCambio = nuevoPago.TipoCambio;
-
-                    pagoOriginal.ReservaId = pagoOriginal.ReservaId;
-                    pagoOriginal.FechaPago = pagoOriginal.FechaPago;
 
                     var reserva = await _context.Reservas
+                        .Include(r => r.Mesa)
+                        .ThenInclude(m => m.Restaurante)
                         .Include(r => r.Cliente)
                         .FirstOrDefaultAsync(r => r.Id == pagoOriginal.ReservaId);
 
-                    if (reserva != null && reserva.Cliente != null)
+                    if (reserva != null)
                     {
-                        pagoOriginal.Monto = AplicarDescuento(pagoOriginal.Monto, reserva.Cliente.TipoCliente);
+                        decimal descuentoTotal = 0;
+
+                        // Aplicar descuento del cliente
+                        if (reserva.Cliente != null)
+                        {
+                            var porcentajeDescuentoCliente = ObtenerPorcentajeDescuentoCliente(reserva.Cliente.TipoCliente);
+                            var descuentoCliente = pagoOriginal.Monto * porcentajeDescuentoCliente;
+                            descuentoTotal += descuentoCliente;
+                            pagoOriginal.Monto -= descuentoCliente;
+                        }
+
+                        // Aplicar descuento del clima
+                        if (reserva.Mesa?.Restaurante != null)
+                        {
+                            var clima = await CreateClimaEntryAsync(reserva.FechaReserva, reserva.Id, reserva.Mesa.Restaurante.Ciudad);
+                            var porcentajeDescuentoClima = ObtenerPorcentajeDescuentoClima(clima);
+                            var descuentoClima = pagoOriginal.Monto * porcentajeDescuentoClima;
+                            descuentoTotal += descuentoClima;
+                            pagoOriginal.Monto -= descuentoClima;
+                        }
+
+                        pagoOriginal.Descuento = (decimal?)descuentoTotal; // Conversión explícita
                     }
 
                     _context.Update(pagoOriginal);
@@ -276,17 +343,59 @@ namespace obligatorio2024.Controllers
             return _context.Pagos.Any(e => e.Id == id);
         }
 
-        private decimal AplicarDescuento(decimal monto, string tipoCliente)
+        private decimal ObtenerPorcentajeDescuentoCliente(string tipoCliente)
         {
+            decimal porcentajeDescuento = 0;
             switch (tipoCliente)
             {
                 case "Frecuente":
-                    return monto * 0.90m;
+                    porcentajeDescuento = 0.10m;
+                    break;
                 case "VIP":
-                    return monto * 0.80m;
-                default:
-                    return monto;
+                    porcentajeDescuento = 0.20m;
+                    break;
             }
+            return porcentajeDescuento;
+        }
+
+        private decimal ObtenerPorcentajeDescuentoClima(Clima clima)
+        {
+            decimal porcentajeDescuentoClima = 0;
+
+            if (clima.Temperatura < 0)
+            {
+                porcentajeDescuentoClima = 0.10m;
+            }
+            else if (clima.Temperatura < 10)
+            {
+                porcentajeDescuentoClima = 0.05m;
+            }
+
+            if (clima.DescripciónClima.Contains("rain", StringComparison.OrdinalIgnoreCase) ||
+                clima.DescripciónClima.Contains("lluvia", StringComparison.OrdinalIgnoreCase))
+            {
+                porcentajeDescuentoClima += 0.05m;
+            }
+
+            return porcentajeDescuentoClima;
+        }
+
+        private async Task<Clima> CreateClimaEntryAsync(DateTime fechaReserva, int reservaId, string ciudad)
+        {
+            var weather = await _weatherService.GetWeatherAsync(ciudad);
+
+            var clima = new Clima
+            {
+                Fecha = fechaReserva,
+                Temperatura = (decimal)weather.Main.Temp.Value, // Conversión explícita de double a decimal
+                DescripciónClima = weather.Weather.First().Description,
+                ReservaId = reservaId
+            };
+
+            _context.Climas.Add(clima);
+            await _context.SaveChangesAsync();
+
+            return clima;
         }
     }
 }

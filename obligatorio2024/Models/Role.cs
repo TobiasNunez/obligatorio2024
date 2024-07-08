@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace obligatorio2024.Models;
 
@@ -12,5 +11,10 @@ public partial class Role
 
     public virtual ICollection<Usuario> Usuarios { get; set; } = new List<Usuario>();
 
-    public virtual ICollection<RolPermiso> RolesPermisos { get; set; } = new List<RolPermiso>();
+    public virtual ICollection<Permiso> IdPermisos { get; set; } = new List<Permiso>();
+
+    public virtual ICollection<RolPermiso> RolPermiso { get; set; } = new List<RolPermiso>();
+
+
+
 }
