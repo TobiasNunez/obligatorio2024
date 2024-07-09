@@ -94,28 +94,36 @@ namespace obligatorio2024.Controllers
 
 
 
-    // GET: Roles/Edit/5
-    public async Task<IActionResult> Edit(int? id)
+        // GET: Roles/Edit/5
+        public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var role = await _context.Roles.FindAsync(id);
+            var role = await _context.Roles
+                .Include(r => r.RolPermiso)
+                .FirstOrDefaultAsync(m => m.Id == id);
+
             if (role == null)
             {
                 return NotFound();
             }
+
+            var allPermisos = await _context.Permisos.ToListAsync();
+            var permisosSeleccionados = role.RolPermiso.Select(rp => rp.IdPermisos).ToList();
+
+            ViewBag.Permisos = allPermisos;
+            ViewBag.PermisosSeleccionados = permisosSeleccionados;
+
             return View(role);
         }
 
         // POST: Roles/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Nombre")] Role role)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Nombre")] Role role, int[] PermisosSeleccionados)
         {
             if (id != role.Id)
             {
@@ -127,6 +135,17 @@ namespace obligatorio2024.Controllers
                 try
                 {
                     _context.Update(role);
+                    await _context.SaveChangesAsync();
+
+                    // Actualizar permisos
+                    var existingPermissions = _context.RolPermiso.Where(rp => rp.IdRol == id);
+                    _context.RolPermiso.RemoveRange(existingPermissions);
+
+                    foreach (var permisoId in PermisosSeleccionados)
+                    {
+                        _context.RolPermiso.Add(new RolPermiso { IdRol = id, IdPermisos = permisoId });
+                    }
+
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -142,11 +161,19 @@ namespace obligatorio2024.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+
+            var allPermisos = await _context.Permisos.ToListAsync();
+            var permisosSeleccionados = role.RolPermiso.Select(rp => rp.IdPermisos).ToList();
+
+            ViewBag.Permisos = allPermisos;
+            ViewBag.PermisosSeleccionados = permisosSeleccionados;
+
             return View(role);
         }
+    
 
-        // GET: Roles/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+    // GET: Roles/Delete/5
+    public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
             {
