@@ -29,6 +29,11 @@ body {
     color: #AB9746;
 }
 
+.el-que-contiene {
+    margin-left: 29px;
+    margin-right: 29px;
+}
+
 .submenu-categories {
     font-size: 0.9em;
     margin-left: 20px;

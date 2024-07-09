@@ -4,8 +4,9 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<h1 class="category">Details</h1>
 
+<div class="el-que-contiene">
 <div>
     <h4>Role</h4>
     <hr />
@@ -21,4 +22,5 @@
 <div>
     <a asp-action="Edit" class="btn btn-create-custom" asp-route-id="@Model?.Id">Edit</a> |
     <a asp-action="Index" class="btn btn-create-custom">Back to List</a>
+</div>
 </div>

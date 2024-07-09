@@ -139,12 +139,15 @@
                         </a>
                     </li>
                 }
+                   @if (User.Identity.IsAuthenticated && permisos.Contains("ver clientes"))
+                {
                 <li class="nav-item">
-                    <a class="nav-link text-dark" asp-area="" asp-controller="Cotizacions" asp-action="Index">
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Clientes" asp-action="Index">
                         <img src="https://img.icons8.com/?size=100&id=uHls6vb2ek05&format=png&color=000000" alt="" class="icono-nav" />
-                        Cotizaciones
+                        Clientes
                     </a>
                 </li>
+                }
                 @if (User.Identity.IsAuthenticated && permisos.Contains("ver roles"))
                 {
                     <li class="nav-item">

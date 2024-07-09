@@ -33,6 +33,7 @@ namespace obligatorio2024.Controllers
                 reseñas = reseñas.Where(r => r.RestauranteId == restauranteId.Value);
             }
 
+
             return View(await reseñas.ToListAsync());
         }
 

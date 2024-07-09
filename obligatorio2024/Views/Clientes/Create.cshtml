@@ -3,11 +3,11 @@
 @{
     ViewData["Title"] = "Create";
 }
-
-<h1>Create</h1>
+<h1 class="category">Crear</h1>
 
 <h4>Cliente</h4>
 <hr />
+<div class="el-que-contiene">
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
@@ -52,6 +52,7 @@
 
 <div>
     <a asp-action="Index" class="btn btn-create-custom">Back to List</a>
+</div>
 </div>
 
 @section Scripts {
