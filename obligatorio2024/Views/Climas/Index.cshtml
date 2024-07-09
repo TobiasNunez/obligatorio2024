@@ -6,51 +6,62 @@
 
 <h1 class="category">Climas</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-
 <div class="el-que-contiene">
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Fecha)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Temperatura)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DescripciónClima)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Reserva)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Fecha)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Temperatura)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DescripciónClima)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Reserva.Id)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    <form asp-action="Index" method="get">
+        <div class="form-group">
+            <label for="reservaId">Buscar clima por ReservaId</label>
+            <input type="number" name="reservaId" class="form-control" />
+        </div>
+        <br />
+        <div class="form-group">
+            <button type="submit" class="btn btn-create-custom">Buscar</button>
+        </div>
+    </form>
+
+    <p>
+        <a asp-action="Create" class="btn btn-create-custom">Create New</a>
+    </p>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Fecha)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Temperatura)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.DescripciónClima)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ReservaId)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Fecha)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Temperatura)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DescripciónClima)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ReservaId)
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-custom-icon btn-edit"></a> |
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-custom-icon btn-details"></a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-custom-icon btn-delete"></a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>

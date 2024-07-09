@@ -56,6 +56,19 @@ builder.Services.AddAuthorization(options =>
             return false;
         });
     });
+    options.AddPolicy("VerClimasPermiso", policy =>
+    {
+        policy.RequireAssertion(context =>
+        {
+            var permisosClaim = context.User.FindFirst(c => c.Type == "Permisos")?.Value;
+            if (permisosClaim != null)
+            {
+                var permisosUsuario = permisosClaim.Split(',');
+                return permisosUsuario.Any(p => p.Trim().Equals("ver climas"));
+            }
+            return false;
+        });
+    });
     options.AddPolicy("VerPagosPermiso", policy =>
     {
         policy.RequireAssertion(context =>
