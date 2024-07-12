@@ -26,8 +26,11 @@
                 @Html.DisplayNameFor(model => model.Telefono)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Rol)
+                @Html.DisplayNameFor(model => model.Contraseña)
             </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Rol)
+                </th>
             <th></th>
         </tr>
     </thead>
@@ -47,6 +50,9 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.Telefono)
                 </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Contraseña)
+                    </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Rol.Id)
                 </td>
