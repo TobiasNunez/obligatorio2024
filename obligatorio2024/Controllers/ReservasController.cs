@@ -76,6 +76,7 @@ namespace obligatorio2024.Controllers
         }
 
         // POST: Reservas/Create
+        // POST: Reservas/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(string emailCliente, [Bind("MesaId,FechaReserva,Estado")] Reserva reserva)
@@ -96,14 +97,7 @@ namespace obligatorio2024.Controllers
                 reserva.ClienteId = cliente.Id;
                 _context.Add(reserva);
 
-                var mesa = await _context.Mesas.FindAsync(reserva.MesaId);
-                if (mesa != null)
-                {
-                    mesa.Estado = "Reservada";
-                    _context.Update(mesa);
-                }
 
-                // Guardar la reserva para obtener su ID
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
@@ -113,6 +107,7 @@ namespace obligatorio2024.Controllers
             }), "Id", "Display", reserva.MesaId);
             return View(reserva);
         }
+
 
         // GET: Reservas/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -139,6 +134,7 @@ namespace obligatorio2024.Controllers
         }
 
         // POST: Reservas/Edit/5
+        // POST: Reservas/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, string emailCliente, [Bind("Id,MesaId,FechaReserva,Estado")] Reserva reserva)
@@ -164,6 +160,8 @@ namespace obligatorio2024.Controllers
                 reserva.ClienteId = cliente.Id;
                 try
                 {
+                    // Eliminar o comentar esta parte
+                    /*
                     var originalReserva = await _context.Reservas.AsNoTracking().FirstOrDefaultAsync(r => r.Id == id);
                     if (originalReserva != null && originalReserva.MesaId != reserva.MesaId)
                     {
@@ -181,6 +179,7 @@ namespace obligatorio2024.Controllers
                             _context.Update(newMesa);
                         }
                     }
+                    */
 
                     _context.Update(reserva);
                     await _context.SaveChangesAsync();
@@ -204,6 +203,7 @@ namespace obligatorio2024.Controllers
             }), "Id", "Display", reserva.MesaId);
             return View(reserva);
         }
+
 
         // GET: Reservas/Delete/5
         public async Task<IActionResult> Delete(int? id)
