@@ -33,7 +33,6 @@ namespace obligatorio2024.Controllers
                 reseñas = reseñas.Where(r => r.RestauranteId == restauranteId.Value);
             }
 
-
             return View(await reseñas.ToListAsync());
         }
 
@@ -56,27 +55,36 @@ namespace obligatorio2024.Controllers
 
             return View(reseña);
         }
+
         // GET: Reseña/Create
         public IActionResult Create()
         {
-            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Nombre");
-            ViewData["RestauranteId"] = new SelectList(_context.Restaurantes, "Id", "Nombre");
+            ViewData["RestauranteId"] = new SelectList(_context.Restaurantes, "Id", "Dirección");
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,ClienteId,RestauranteId,Puntaje,Comentario,FechaReseña")] Reseña reseña)
+        public async Task<IActionResult> Create(string email, [Bind("Id,RestauranteId,Puntaje,Comentario,FechaReseña")] Reseña reseña)
         {
+            var cliente = await _context.Clientes.FirstOrDefaultAsync(c => c.Email == email);
+            if (cliente == null)
+            {
+                ModelState.AddModelError(string.Empty, "No se encontró un cliente con este email.");
+                ViewData["RestauranteId"] = new SelectList(_context.Restaurantes, "Id", "Dirección", reseña.RestauranteId);
+                return View(reseña);
+            }
+
             if (ModelState.IsValid)
             {
+                reseña.ClienteId = cliente.Id;
                 reseña.FechaReseña = DateTime.Now;
                 _context.Add(reseña);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Nombre", reseña.ClienteId);
-            ViewData["RestauranteId"] = new SelectList(_context.Restaurantes, "Id", "Nombre", reseña.RestauranteId);
+
+            ViewData["RestauranteId"] = new SelectList(_context.Restaurantes, "Id", "Dirección", reseña.RestauranteId);
             return View(reseña);
         }
 
@@ -95,7 +103,7 @@ namespace obligatorio2024.Controllers
                 return NotFound();
             }
             ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Nombre", reseña.ClienteId);
-            ViewData["RestauranteId"] = new SelectList(_context.Restaurantes, "Id", "Nombre", reseña.RestauranteId);
+            ViewData["RestauranteId"] = new SelectList(_context.Restaurantes, "Id", "Dirección", reseña.RestauranteId);
             return View(reseña);
         }
 
@@ -129,8 +137,8 @@ namespace obligatorio2024.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Nombre", reseña.ClienteId);
-            ViewData["RestauranteId"] = new SelectList(_context.Restaurantes, "Id", "Nombre", reseña.RestauranteId);
+            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Dirección", reseña.ClienteId);
+            ViewData["RestauranteId"] = new SelectList(_context.Restaurantes, "Id", "Dirección", reseña.RestauranteId);
             return View(reseña);
         }
 

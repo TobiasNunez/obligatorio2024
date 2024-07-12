@@ -7,51 +7,52 @@
 <h1 class="category">Restaurantes</h1>
 
 <div class="el-que-contiene">
-<p>
-    <a asp-action="Create" class="btn btn-create-custom">Create New</a>
-</p>
+    <p>
+        <a asp-action="Create" class="btn btn-create-custom">Create New</a>
+        <a asp-controller="Menus" asp-action="Index" class="btn btn-create-custom">Gestionar Menú</a>
+    </p>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Nombre)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Ciudad)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Dirección)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Teléfono)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
+    <table class="table">
+        <thead>
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Nombre)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Ciudad)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Dirección)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Teléfono)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-custom-icon btn-edit"></a> |
-                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-custom-icon btn-details"></a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-custom-icon btn-delete"></a>
-                </td>
+                <th>
+                    @Html.DisplayNameFor(model => model.Nombre)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Ciudad)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Dirección)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Teléfono)
+                </th>
+                <th></th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Nombre)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Ciudad)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Dirección)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Teléfono)
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-custom-icon btn-edit"></a> |
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-custom-icon btn-details"></a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-custom-icon btn-delete"></a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>

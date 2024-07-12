@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -20,20 +19,28 @@ namespace obligatorio2024.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? restauranteId)
         {
+            var restaurantes = await _context.Restaurantes.ToListAsync();
+            ViewBag.RestauranteId = new SelectList(restaurantes, "Id", "Dirección", restauranteId);
+            ViewBag.SelectedRestauranteId = restauranteId;
+
             var obligatorio2024Context = _context.Ordenes
                 .Include(o => o.Reserva)
-                .ThenInclude(r => r.Cliente)
+                    .ThenInclude(r => r.Cliente)
                 .Include(o => o.Reserva)
-                .ThenInclude(r => r.Mesa)
+                    .ThenInclude(r => r.Mesa)
                 .Include(o => o.OrdenDetalles)
-                .ThenInclude(od => od.Menu);
+                    .ThenInclude(od => od.Menu)
+                .AsQueryable();
+
+            if (restauranteId.HasValue)
+            {
+                obligatorio2024Context = obligatorio2024Context.Where(o => o.Reserva.Mesa.RestauranteId == restauranteId.Value);
+            }
 
             return View(await obligatorio2024Context.ToListAsync());
         }
-
-
 
         // GET: Ordenes/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -45,7 +52,7 @@ namespace obligatorio2024.Controllers
 
             var ordene = await _context.Ordenes
                 .Include(o => o.OrdenDetalles)
-                .ThenInclude(od => od.Menu)
+                    .ThenInclude(od => od.Menu)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (ordene == null)
@@ -56,7 +63,6 @@ namespace obligatorio2024.Controllers
             return View(ordene);
         }
 
-
         // GET: Ordenes/Create
         public IActionResult Create()
         {
@@ -65,12 +71,17 @@ namespace obligatorio2024.Controllers
         }
 
         // POST: Ordenes/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,ReservaId,Total")] Ordene ordene)
         {
+            if (_context.Ordenes.Any(o => o.ReservaId == ordene.ReservaId))
+            {
+                ModelState.AddModelError("ReservaId", "Ya existe una orden asociada a esta reserva.");
+                ViewData["ReservaId"] = new SelectList(_context.Reservas, "Id", "Id", ordene.ReservaId);
+                return View(ordene);
+            }
+
             if (ModelState.IsValid)
             {
                 _context.Add(ordene);
@@ -99,8 +110,6 @@ namespace obligatorio2024.Controllers
         }
 
         // POST: Ordenes/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,ReservaId,Total")] Ordene ordene)
@@ -133,8 +142,6 @@ namespace obligatorio2024.Controllers
             ViewData["ReservaId"] = new SelectList(_context.Reservas, "Id", "Id", ordene.ReservaId);
             return View(ordene);
         }
-
-
 
         // GET: Ordenes/AddDetail/5
         public IActionResult AddDetail(int? id)
@@ -195,7 +202,6 @@ namespace obligatorio2024.Controllers
             ViewData["MenuId"] = new SelectList(_context.Menus, "Id", "NombrePlato", ordenDetalle.MenuId);
             return View(ordenDetalle);
         }
-
 
         public async Task<IActionResult> IncrementDetail(int id)
         {
@@ -259,8 +265,6 @@ namespace obligatorio2024.Controllers
             return RedirectToAction(nameof(Details), new { id = detail.OrdenId });
         }
 
-
-
         // GET: Ordenes/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -271,9 +275,9 @@ namespace obligatorio2024.Controllers
 
             var ordene = await _context.Ordenes
                 .Include(o => o.Reserva)
-                .ThenInclude(r => r.Cliente)
+                    .ThenInclude(r => r.Cliente)
                 .Include(o => o.Reserva)
-                .ThenInclude(r => r.Mesa)
+                    .ThenInclude(r => r.Mesa)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (ordene == null)
             {
@@ -304,8 +308,5 @@ namespace obligatorio2024.Controllers
         {
             return _context.Ordenes.Any(e => e.Id == id);
         }
-
-
-
     }
 }

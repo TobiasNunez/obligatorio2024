@@ -4,60 +4,72 @@
     ViewData["Title"] = "Index";
 }
 
-<h1 class="category">Ordenes</h1>
+<h1 class="category">Órdenes</h1>
 
 <div class="el-que-contiene">
-<p>
-    <a asp-action="Create" class="btn btn-create-custom">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Total)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Reserva)
-            </th>
-            <th>
-                Mesa
-            </th>
-            <th>
-                Cliente Nombre
-            </th>
-            <th>
-                Cliente Email
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
+  
+
+    <div class="mb-4">
+        <form method="get" asp-action="Index">
+            <div class="form-group">
+                <label for="RestauranteId">Selecciona un Restaurante:</label>
+                <select class="form-control" id="RestauranteId" name="restauranteId" asp-items="ViewBag.RestauranteId" onchange="this.form.submit()">
+                </select>
+            </div>
+        </form>
+    </div>
+    <p>
+        <a asp-action="Create" class="btn btn-create-custom">Create New</a>
+    </p>
+
+    <table class="table">
+        <thead>
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Total)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Reserva.Id)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Reserva.Mesa.NumeroMesa)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Reserva.Cliente.Nombre)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Reserva.Cliente.Email)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-custom-icon btn-edit"></a> |
-                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-custom-icon btn-details"></a> |
-                    <a asp-action="AddDetail" asp-route-id="@item.Id" class="btn btn-custom-icon btn-create"></a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-custom-icon btn-delete"></a>
-                </td>
+                <th>
+                    @Html.DisplayNameFor(model => model.Total)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Reserva)
+                </th>
+                <th>
+                    Mesa
+                </th>
+                <th>
+                    Cliente Nombre
+                </th>
+                <th>
+                    Cliente Email
+                </th>
+                <th></th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Total)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Reserva.Id)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Reserva.Mesa.NumeroMesa)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Reserva.Cliente.Nombre)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Reserva.Cliente.Email)
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-custom-icon btn-edit"></a> |
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-custom-icon btn-details"></a> |
+                        <a asp-action="AddDetail" asp-route-id="@item.Id" class="btn btn-custom-icon btn-create"></a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-custom-icon btn-delete"></a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>

@@ -6,33 +6,34 @@
 
 <h1 class="category">Crear Reseña</h1>
 <div class="el-que-contiene">
-<div class="grid gap-6">
-    <form asp-action="Create">
-        <div class="grid gap-2">
-            <label class="control-label" asp-for="ClienteId">Cliente</label>
-            <select class="form-control" asp-for="ClienteId" asp-items="ViewBag.ClienteId"></select>
-        </div>
-        <div class="grid gap-2">
-            <label class="control-label" asp-for="RestauranteId">Restaurante</label>
-            <select class="form-control" asp-for="RestauranteId" asp-items="ViewBag.RestauranteId"></select>
-        </div>
-        <div class="grid gap-2">
-            <label class="control-label" asp-for="Puntaje">Puntaje</label>
-            <select class="form-control" asp-for="Puntaje">
-                <option value="1">1 estrella</option>
-                <option value="2">2 estrellas</option>
-                <option value="3">3 estrellas</option>
-                <option value="4">4 estrellas</option>
-                <option value="5">5 estrellas</option>
-            </select>
-        </div>
-        <div class="grid gap-2">
-            <label class="control-label" asp-for="Comentario">Comentario</label>
-            <textarea class="form-control" asp-for="Comentario" placeholder="Escribe tu reseña"></textarea>
-            <span asp-validation-for="Comentario" class="text-danger"></span>
-        </div>
-        <br />
-        <button type="submit" class="btn btn-create-custom">Enviar Reseña</button>
-    </form>
-</div>
+    <div class="grid gap-6">
+        <form asp-action="Create">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="grid gap-2">
+                <label class="control-label">Email del Cliente</label>
+                <input type="email" class="form-control" name="email" required />
+            </div>
+            <div class="grid gap-2">
+                <label class="control-label" asp-for="RestauranteId">Restaurante</label>
+                <select class="form-control" asp-for="RestauranteId" asp-items="ViewBag.RestauranteId"></select>
+            </div>
+            <div class="grid gap-2">
+                <label class="control-label" asp-for="Puntaje">Puntaje</label>
+                <select class="form-control" asp-for="Puntaje">
+                    <option value="1">1 estrella</option>
+                    <option value="2">2 estrellas</option>
+                    <option value="3">3 estrellas</option>
+                    <option value="4">4 estrellas</option>
+                    <option value="5">5 estrellas</option>
+                </select>
+            </div>
+            <div class="grid gap-2">
+                <label class="control-label" asp-for="Comentario">Comentario</label>
+                <textarea class="form-control" asp-for="Comentario" placeholder="Escribe tu reseña"></textarea>
+                <span asp-validation-for="Comentario" class="text-danger"></span>
+            </div>
+            <br />
+            <button type="submit" class="btn btn-create-custom">Enviar Reseña</button>
+        </form>
+    </div>
 </div>
