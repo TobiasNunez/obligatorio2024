@@ -20,7 +20,7 @@ namespace obligatorio2024.Controllers
         public async Task<IActionResult> Index(int? restauranteId)
         {
             var restaurantes = await _context.Restaurantes.ToListAsync();
-            ViewBag.RestauranteId = new SelectList(restaurantes, "Id", "Nombre", restauranteId);
+            ViewBag.RestauranteId = new SelectList(restaurantes, "Id", "Dirección", restauranteId);
             ViewBag.SelectedRestauranteId = restauranteId;
 
             var reseñas = _context.Reseñas

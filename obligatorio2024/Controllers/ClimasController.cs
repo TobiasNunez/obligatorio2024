@@ -7,7 +7,6 @@ using obligatorio2024.Models;
 
 namespace obligatorio2024.Controllers
 {
-    [Authorize(Policy = "VerClimasPermiso")]
     public class ClimasController : Controller
     {
         private readonly Obligatorio2024Context _context;
